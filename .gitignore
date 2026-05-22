@@ -24,10 +24,8 @@
 .DS_Store
 *.pem
 
-# local symlinks (font files, covers)
+# local symlinks (font files only - too large for GitHub)
 public/fonts
-public/legacy_covers
-public/unified_covers
 
 # debug
 npm-debug.log*

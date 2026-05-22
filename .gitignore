@@ -24,6 +24,11 @@
 .DS_Store
 *.pem
 
+# local symlinks (font files, covers)
+public/fonts
+public/legacy_covers
+public/unified_covers
+
 # debug
 npm-debug.log*
 yarn-debug.log*

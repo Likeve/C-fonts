@@ -5439,10 +5439,16 @@
   ],
   "categories": [
     {
-      "slug": "POP",
-      "zh": "POP潮流",
-      "en": "POP Style",
-      "count": 32
+      "slug": "卡通",
+      "zh": "卡通动漫",
+      "en": "Cartoon",
+      "count": 11
+    },
+    {
+      "slug": "现代",
+      "zh": "现代设计",
+      "en": "Modern",
+      "count": 37
     },
     {
       "slug": "纤细清新",
@@ -5451,22 +5457,10 @@
       "count": 2
     },
     {
-      "slug": "科技感",
-      "zh": "科技未来",
-      "en": "Tech",
-      "count": 27
-    },
-    {
-      "slug": "优雅",
-      "zh": "优雅风尚",
-      "en": "Elegant",
-      "count": 72
-    },
-    {
-      "slug": "手写字",
-      "zh": "手写字",
-      "en": "Handwriting",
-      "count": 37
+      "slug": "简约",
+      "zh": "简约清新",
+      "en": "Minimalist",
+      "count": 9
     },
     {
       "slug": "炫酷",
@@ -5475,16 +5469,16 @@
       "count": 4
     },
     {
-      "slug": "简约",
-      "zh": "简约清新",
-      "en": "Minimalist",
-      "count": 9
+      "slug": "时尚",
+      "zh": "时尚潮流",
+      "en": "Fashion",
+      "count": 10
     },
     {
-      "slug": "萌趣",
-      "zh": "萌趣乐园",
-      "en": "Playful",
-      "count": 19
+      "slug": "科技感",
+      "zh": "科技未来",
+      "en": "Tech",
+      "count": 27
     },
     {
       "slug": "创意",
@@ -5499,28 +5493,16 @@
       "count": 10
     },
     {
-      "slug": "古典",
-      "zh": "古典雅韵",
-      "en": "Classic",
-      "count": 12
+      "slug": "萌趣",
+      "zh": "萌趣乐园",
+      "en": "Playful",
+      "count": 19
     },
     {
-      "slug": "卡通",
-      "zh": "卡通动漫",
-      "en": "Cartoon",
-      "count": 11
-    },
-    {
-      "slug": "清新",
-      "zh": "清新文艺",
-      "en": "Fresh",
-      "count": 23
-    },
-    {
-      "slug": "镂空描边",
-      "zh": "镂空描边",
-      "en": "Outline",
-      "count": 1
+      "slug": "优雅",
+      "zh": "优雅风尚",
+      "en": "Elegant",
+      "count": 72
     },
     {
       "slug": "霸气",
@@ -5529,16 +5511,28 @@
       "count": 12
     },
     {
-      "slug": "时尚",
-      "zh": "时尚潮流",
-      "en": "Fashion",
-      "count": 10
+      "slug": "毛笔",
+      "zh": "毛笔书法",
+      "en": "Calligraphy",
+      "count": 7
     },
     {
-      "slug": "中国风",
-      "zh": "中国风",
-      "en": "Chinese Traditional",
-      "count": 28
+      "slug": "POP",
+      "zh": "POP潮流",
+      "en": "POP Style",
+      "count": 32
+    },
+    {
+      "slug": "清新",
+      "zh": "清新文艺",
+      "en": "Fresh",
+      "count": 23
+    },
+    {
+      "slug": "手写字",
+      "zh": "手写字",
+      "en": "Handwriting",
+      "count": 37
     },
     {
       "slug": "圆润",
@@ -5547,22 +5541,28 @@
       "count": 8
     },
     {
+      "slug": "镂空描边",
+      "zh": "镂空描边",
+      "en": "Outline",
+      "count": 1
+    },
+    {
       "slug": "可爱",
       "zh": "可爱萌趣",
       "en": "Cute",
       "count": 62
     },
     {
-      "slug": "现代",
-      "zh": "现代设计",
-      "en": "Modern",
-      "count": 37
+      "slug": "古典",
+      "zh": "古典雅韵",
+      "en": "Classic",
+      "count": 12
     },
     {
-      "slug": "毛笔",
-      "zh": "毛笔书法",
-      "en": "Calligraphy",
-      "count": 7
+      "slug": "中国风",
+      "zh": "中国风",
+      "en": "Chinese Traditional",
+      "count": 28
     },
     {
       "slug": "未分类",

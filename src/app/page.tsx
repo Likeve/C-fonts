@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useLanguage } from "@/components/LanguageProvider";
 import { t, vendors } from "@/lib/i18n";
+import { getAssetUrl } from "@/lib/assets";
 import fontsData from "@/data/fonts.json";
 import type { FontData, FontsJson } from "@/types/font";
 
@@ -33,11 +34,6 @@ export default function HomePage() {
     }
     return result;
   }, [search, activeCategory]);
-
-  const getCoverPath = (font: FontData): string | null => {
-    if (!font.coverPath) return null;
-    return "/" + font.coverPath;
-  };
 
   return (
     <div className="mx-auto max-w-7xl px-4 sm:px-6 py-8">
@@ -103,7 +99,7 @@ export default function HomePage() {
       ) : (
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
           {filtered.map((font) => {
-            const cover = getCoverPath(font);
+            const cover = getAssetUrl(font.coverPath);
             return (
               <Link
                 key={font.id}

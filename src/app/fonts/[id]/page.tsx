@@ -6,6 +6,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useLanguage } from "@/components/LanguageProvider";
 import { t, vendors } from "@/lib/i18n";
+import { getAssetUrl } from "@/lib/assets";
 import fontsData from "@/data/fonts.json";
 import type { FontsJson } from "@/types/font";
 
@@ -24,14 +25,11 @@ export default function FontDetailPage() {
 
   const font = data.fonts.find((f) => f.id === id);
 
-  const fontPath = font?.fontPath;
-  const encodedPath = fontPath
-    ? fontPath.split("/").map(encodeURIComponent).join("/")
-    : "";
+  const fontUrl = getAssetUrl(font?.fontPath ?? null);
 
   useEffect(() => {
-    if (!fontPath || !font) {
-      if (!fontPath) setLoading(false);
+    if (!fontUrl || !font) {
+      if (!fontUrl) setLoading(false);
       return;
     }
 
@@ -44,7 +42,7 @@ export default function FontDetailPage() {
     style.textContent = `
       @font-face {
         font-family: "${family}";
-        src: url("/${encodedPath}");
+        src: url("${fontUrl}");
         font-display: swap;
       }
     `;
@@ -60,7 +58,7 @@ export default function FontDetailPage() {
     return () => {
       document.head.removeChild(style);
     };
-  }, [fontPath, font?.id, encodedPath]);
+  }, [fontUrl, font?.id]);
 
   useEffect(() => {
     const family = font?.id?.replace(/[^a-zA-Z0-9\u4e00-\u9fff]/g, "-") || "";
@@ -83,15 +81,8 @@ export default function FontDetailPage() {
   }
 
   const displayName = lang === "en" ? font.englishName : font.name;
-
-  const getCoverPath = (): string | null => {
-    if (!font.coverPath) return null;
-    return "/" + font.coverPath;
-  };
-
-  const cover = getCoverPath();
+  const cover = getAssetUrl(font.coverPath);
   const fontFamily = font.id.replace(/[^a-zA-Z0-9\u4e00-\u9fff]/g, "-");
-  const ttfUrl = `/${encodedPath}`;
 
   return (
     <div className="mx-auto max-w-4xl px-4 sm:px-6 py-8">
@@ -158,16 +149,18 @@ export default function FontDetailPage() {
               </div>
             </div>
 
-            <a
-              href={ttfUrl}
-              download={`${font.name}.ttf`}
-              className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-zinc-900 px-4 py-3 text-sm font-medium text-white transition-colors hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
-            >
-              <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-              </svg>
-              {t("downloadTtf", lang)}
-            </a>
+            {fontUrl && (
+              <a
+                href={fontUrl}
+                download={`${font.name}.ttf`}
+                className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-zinc-900 px-4 py-3 text-sm font-medium text-white transition-colors hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
+              >
+                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                {t("downloadTtf", lang)}
+              </a>
+            )}
           </div>
         </div>
 

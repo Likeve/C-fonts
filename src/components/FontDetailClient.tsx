@@ -19,6 +19,7 @@ export default function FontDetailClient({ font }: FontDetailClientProps) {
   );
   const [fontLoaded, setFontLoaded] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [checkingOut, setCheckingOut] = useState(false);
   const previewRef = useRef<HTMLDivElement>(null);
 
   const fontUrl = getAssetUrl(font?.fontPath ?? null);
@@ -66,6 +67,23 @@ export default function FontDetailClient({ font }: FontDetailClientProps) {
   const displayName = lang === "en" ? font.englishName : font.name;
   const cover = getAssetUrl(font.coverPath);
   const fontFamily = font.id.replace(/[^a-zA-Z0-9\u4e00-\u9fff]/g, "-");
+
+  const handleDownload = async () => {
+    setCheckingOut(true);
+    try {
+      const res = await fetch("/api/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ fontId: font.id, fontName: font.name }),
+      });
+      const data = await res.json();
+      if (data.url) {
+        window.location.href = data.url;
+      }
+    } catch {
+      setCheckingOut(false);
+    }
+  };
 
   return (
     <div className="mx-auto max-w-4xl px-4 sm:px-6 py-8">
@@ -133,16 +151,25 @@ export default function FontDetailClient({ font }: FontDetailClientProps) {
             </div>
 
             {fontUrl && (
-              <a
-                href={fontUrl}
-                download={`${font.name}.ttf`}
-                className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-zinc-900 px-4 py-3 text-sm font-medium text-white transition-colors hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
+              <button
+                onClick={handleDownload}
+                disabled={checkingOut}
+                className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-zinc-900 px-4 py-3 text-sm font-medium text-white transition-colors hover:bg-zinc-800 disabled:opacity-60 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
               >
-                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
-                {t("downloadTtf", lang)}
-              </a>
+                {checkingOut ? (
+                  <>
+                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white dark:border-zinc-900/30 dark:border-t-zinc-900" />
+                    {lang === "zh" ? "跳转中..." : "Redirecting..."}
+                  </>
+                ) : (
+                  <>
+                    <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z" />
+                    </svg>
+                    {lang === "zh" ? "购买下载" : "Buy & Download"} — $1.99
+                  </>
+                )}
+              </button>
             )}
           </div>
         </div>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
 import { useLanguage } from "@/components/LanguageProvider";
 import { getAssetUrl } from "@/lib/assets";
@@ -15,6 +15,7 @@ export default function SuccessContent() {
   const sessionId = searchParams.get("session_id");
   const fontId = searchParams.get("font");
   const { lang } = useLanguage();
+  const downloadTriggered = useRef(false);
 
   const [status, setStatus] = useState<"verifying" | "paid" | "error">(
     sessionId ? "verifying" : "paid"
@@ -47,6 +48,18 @@ export default function SuccessContent() {
       verifyPayment();
     }
   }, [sessionId, verifyPayment]);
+
+  useEffect(() => {
+    if (status === "paid" && fontUrl && !downloadTriggered.current) {
+      downloadTriggered.current = true;
+      const a = document.createElement("a");
+      a.href = fontUrl;
+      a.download = font?.name ? `${font.name}.ttf` : "font.ttf";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+  }, [status, fontUrl, font]);
 
   if (!font || !fontUrl) {
     return (

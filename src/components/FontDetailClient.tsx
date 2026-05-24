@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useLanguage } from "@/components/LanguageProvider";
@@ -54,15 +54,29 @@ export default function FontDetailClient({ font }: FontDetailClientProps) {
     return () => subscription.unsubscribe();
   }, []);
 
-  useEffect(() => {
-    if (!user) return;
+  const fetchDownloadsInfo = useCallback(() => {
     fetch("/api/user/downloads")
       .then((res) => res.json())
       .then((data) => {
         if (!data.error) setDownloadsInfo(data);
       })
       .catch(() => {});
-  }, [user]);
+  }, []);
+
+  useEffect(() => {
+    if (!user) return;
+    fetchDownloadsInfo();
+  }, [user, fetchDownloadsInfo]);
+
+  useEffect(() => {
+    const handleVisibility = () => {
+      if (document.visibilityState === "visible" && user) {
+        fetchDownloadsInfo();
+      }
+    };
+    document.addEventListener("visibilitychange", handleVisibility);
+    return () => document.removeEventListener("visibilitychange", handleVisibility);
+  }, [user, fetchDownloadsInfo]);
 
   useEffect(() => {
     if (!fontUrl || !font) {

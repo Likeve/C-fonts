@@ -1,19 +1,19 @@
 "use client";
 
 import { useLanguage } from "./LanguageProvider";
-import { t } from "@/lib/i18n";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import Image from "next/image";
 import { useState, useEffect } from "react";
+import LoginModal from "./LoginModal";
 import type { User } from "@supabase/supabase-js";
 
 export function UserMenu() {
-  const { lang, toggleLang, label } = useLanguage();
+  const { lang } = useLanguage();
   const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [showLoginModal, setShowLoginModal] = useState(false);
 
   useEffect(() => {
     const supabase = createClient();
@@ -26,7 +26,10 @@ export function UserMenu() {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
-      if (session) router.refresh();
+      if (session) {
+        setShowLoginModal(false);
+        router.refresh();
+      }
     });
 
     return () => subscription.unsubscribe();
@@ -65,21 +68,20 @@ export function UserMenu() {
               </button>
             </div>
           ) : (
-            <Link
-              href="/login"
+            <button
+              onClick={() => setShowLoginModal(true)}
               className="rounded-lg border border-zinc-300 px-3 py-1.5 text-sm font-medium text-zinc-600 transition-colors hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
             >
               {lang === "zh" ? "登录" : "Sign in"}
-            </Link>
+            </button>
           )}
         </>
       )}
-      <button
-        onClick={toggleLang}
-        className="rounded-lg border border-zinc-300 px-3 py-1.5 text-sm font-medium text-zinc-600 transition-colors hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
-      >
-        {label}
-      </button>
+
+      <LoginModal
+        open={showLoginModal}
+        onClose={() => setShowLoginModal(false)}
+      />
     </div>
   );
 }

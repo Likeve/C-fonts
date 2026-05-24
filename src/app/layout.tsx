@@ -79,6 +79,7 @@ export const metadata: Metadata = {
 
 import { LanguageProvider } from "@/components/LanguageProvider";
 import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 
 export default function RootLayout({
   children,
@@ -113,9 +114,7 @@ export default function RootLayout({
         <LanguageProvider>
           <Header />
           <main className="flex-1">{children}</main>
-          <footer className="border-t border-zinc-200 dark:border-zinc-800 py-8 text-center text-sm text-zinc-500 dark:text-zinc-400">
-            中文字体库 &copy; {new Date().getFullYear()}
-          </footer>
+          <Footer />
         </LanguageProvider>
       </body>
     </html>

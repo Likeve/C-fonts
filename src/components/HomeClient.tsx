@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useLanguage } from "@/components/LanguageProvider";
@@ -13,10 +13,25 @@ interface HomeClientProps {
   categories: CategoryData[];
 }
 
+function getColumns(): number {
+  if (typeof window === "undefined") return 5;
+  const w = window.innerWidth;
+  if (w >= 1024) return 5;
+  if (w >= 768) return 4;
+  if (w >= 640) return 3;
+  return 2;
+}
+
+const ROWS_PER_BATCH = 3;
+
 export default function HomeClient({ fonts, categories }: HomeClientProps) {
   const { lang } = useLanguage();
   const [search, setSearch] = useState("");
   const [activeCategory, setActiveCategory] = useState<string>("all");
+  const [visibleCount, setVisibleCount] = useState(0);
+  const [columns, setColumns] = useState(5);
+  const sentinelRef = useRef<HTMLDivElement>(null);
+  const gridRef = useRef<HTMLDivElement>(null);
 
   const filtered = useMemo(() => {
     let result = fonts;
@@ -36,6 +51,49 @@ export default function HomeClient({ fonts, categories }: HomeClientProps) {
     }
     return result;
   }, [search, activeCategory, fonts]);
+
+  useEffect(() => {
+    setVisibleCount(0);
+  }, [search, activeCategory]);
+
+  const batchSize = columns * ROWS_PER_BATCH;
+
+  useEffect(() => {
+    if (visibleCount === 0 && filtered.length > 0) {
+      setVisibleCount(batchSize);
+    }
+  }, [filtered.length, batchSize, visibleCount]);
+
+  useEffect(() => {
+    const updateColumns = () => setColumns(getColumns());
+    updateColumns();
+    window.addEventListener("resize", updateColumns);
+    return () => window.removeEventListener("resize", updateColumns);
+  }, []);
+
+  const loadMore = useCallback(() => {
+    setVisibleCount((prev) => Math.min(prev + batchSize, filtered.length));
+  }, [batchSize, filtered.length]);
+
+  useEffect(() => {
+    const sentinel = sentinelRef.current;
+    if (!sentinel) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && visibleCount < filtered.length) {
+          loadMore();
+        }
+      },
+      { rootMargin: "200px" }
+    );
+
+    observer.observe(sentinel);
+    return () => observer.disconnect();
+  }, [visibleCount, filtered.length, loadMore]);
+
+  const visibleFonts = filtered.slice(0, visibleCount);
+  const hasMore = visibleCount < filtered.length;
 
   return (
     <div className="mx-auto max-w-7xl px-4 sm:px-6 py-8">
@@ -108,8 +166,11 @@ export default function HomeClient({ fonts, categories }: HomeClientProps) {
       ) : (
         <section>
           <h2 className="sr-only">{lang === "zh" ? "字体列表" : "Font List"}</h2>
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-            {filtered.map((font) => {
+          <div
+            ref={gridRef}
+            className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5"
+          >
+            {visibleFonts.map((font) => {
               const cover = getAssetUrl(font.coverPath);
               return (
                 <Link
@@ -152,6 +213,11 @@ export default function HomeClient({ fonts, categories }: HomeClientProps) {
               );
             })}
           </div>
+          {hasMore && (
+            <div ref={sentinelRef} className="flex items-center justify-center py-8">
+              <div className="h-6 w-6 animate-spin rounded-full border-2 border-zinc-300 border-t-zinc-600 dark:border-zinc-700 dark:border-t-zinc-400" />
+            </div>
+          )}
         </section>
       )}
     </div>

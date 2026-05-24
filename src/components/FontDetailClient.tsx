@@ -145,7 +145,6 @@ export default function FontDetailClient({ font }: FontDetailClientProps) {
 
       if (data.success && data.downloadUrl) {
         await triggerDownload(data.downloadUrl);
-        // Refresh downloads info
         fetch("/api/user/downloads")
           .then((r) => r.json())
           .then((d) => {
@@ -159,17 +158,29 @@ export default function FontDetailClient({ font }: FontDetailClientProps) {
     setCheckingOut(false);
   };
 
+  const [checkingUnlimited, setCheckingUnlimited] = useState(false);
+
+  const handleUnlimitedPurchase = async () => {
+    setCheckingUnlimited(true);
+    try {
+      const res = await fetch("/api/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ fontId: font.id, fontName: font.name, plan: "unlimited" }),
+      });
+      const data = await res.json();
+      if (data.url) {
+        window.location.href = data.url;
+      }
+    } catch {
+      // ignore
+    }
+    setCheckingUnlimited(false);
+  };
+
   const displayName = lang === "en" ? font.englishName : font.name;
   const cover = getAssetUrl(font.coverPath);
   const fontFamily = font.id.replace(/[^a-zA-Z0-9\u4e00-\u9fff]/g, "-");
-
-  const remainingText = downloadsInfo
-    ? downloadsInfo.hasUnlimited
-      ? lang === "zh"
-        ? "无限制"
-        : "Unlimited"
-      : `${downloadsInfo.remaining}/${downloadsInfo.freeLimit}`
-    : "";
 
   const buttonLabel = !fontUrl
     ? t("previewNotAvailable", lang)
@@ -185,9 +196,13 @@ export default function FontDetailClient({ font }: FontDetailClientProps) {
             ? lang === "zh"
               ? "购买下载"
               : "Buy & Download"
-            : lang === "zh"
-              ? "下载字体"
-              : "Download Font";
+            : downloadsInfo.hasUnlimited
+              ? lang === "zh"
+                ? "下载字体"
+                : "Download Font"
+              : lang === "zh"
+                ? `下载字体 (${downloadsInfo.remaining}/${downloadsInfo.freeLimit})`
+                : `Download Font (${downloadsInfo.remaining}/${downloadsInfo.freeLimit})`;
 
   return (
     <div className="mx-auto max-w-4xl px-4 sm:px-6 py-8">
@@ -332,12 +347,27 @@ export default function FontDetailClient({ font }: FontDetailClientProps) {
                   )}
                 </button>
 
-                {user && downloadsInfo && !downloadsInfo.hasUnlimited && (
-                  <p className="text-center text-xs text-zinc-400 dark:text-zinc-500">
-                    {lang === "zh"
-                      ? `剩余免费下载: ${remainingText}`
-                      : `Free downloads left: ${remainingText}`}
-                  </p>
+                {user && !downloadsInfo?.hasUnlimited && (
+                  <button
+                    onClick={handleUnlimitedPurchase}
+                    disabled={checkingUnlimited}
+                    className="flex w-full items-center justify-center gap-2 rounded-xl border-2 border-zinc-900 bg-white px-4 py-3 text-sm font-medium text-zinc-900 transition-colors hover:bg-zinc-50 disabled:opacity-60 dark:border-zinc-100 dark:bg-zinc-900 dark:text-zinc-100 dark:hover:bg-zinc-800"
+                  >
+                    {checkingUnlimited ? (
+                      <>
+                        <div className="h-4 w-4 animate-spin rounded-full border-2 border-zinc-300 border-t-zinc-600 dark:border-zinc-700 dark:border-t-zinc-400" />
+                        {lang === "zh" ? "处理中..." : "Processing..."}
+                      </>
+                    ) : (
+                      <>
+                        <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                        </svg>
+                        {lang === "zh" ? "无限制下载" : "Unlimited Downloads"}
+                        <span className="ml-1 opacity-60">$7.99</span>
+                      </>
+                    )}
+                  </button>
                 )}
 
                 {user && downloadsInfo?.hasUnlimited && (

@@ -6,7 +6,11 @@ export function getAssetUrl(path: string | null): string | null {
     return path;
   }
   if (FONTS_CDN && path.startsWith("fonts/")) {
-    return `${FONTS_CDN}${path}`;
+    const encoded = path
+      .split("/")
+      .map((seg) => encodeURIComponent(seg))
+      .join("/");
+    return `${FONTS_CDN}${encoded}`;
   }
   return `/${path}`;
 }

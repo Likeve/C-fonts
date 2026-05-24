@@ -26,6 +26,7 @@
 
 # local symlinks (font files only - too large for GitHub)
 public/fonts
+/fonts
 
 # debug
 npm-debug.log*

@@ -3,7 +3,7 @@ import fontsData from "@/data/fonts.json";
 import type { FontsJson } from "@/types/font";
 
 const data = fontsData as FontsJson;
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://chinesefonts.app";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.cfont.site";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const fontPages: MetadataRoute.Sitemap = data.fonts.map((font) => ({

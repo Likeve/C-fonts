@@ -5,7 +5,7 @@ import type { FontsJson } from "@/types/font";
 import FontDetailClient from "@/components/FontDetailClient";
 
 const data = fontsData as FontsJson;
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://chinesefonts.app";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.cfont.site";
 
 export function generateStaticParams() {
   return data.fonts.map((font) => ({

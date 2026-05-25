@@ -1,10 +1,20 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, JetBrains_Mono, Playfair_Display } from "next/font/google";
 import "./globals.css";
 
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
+});
+
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ["latin"],
+  variable: "--font-jetbrains-mono",
+});
+
+const playfair = Playfair_Display({
+  subsets: ["latin"],
+  variable: "--font-playfair",
 });
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://www.cfont.site";
@@ -105,8 +115,8 @@ export default function RootLayout({
   };
 
   return (
-    <html lang="zh" suppressHydrationWarning className={`${inter.variable} h-full antialiased`}>
-      <body className="min-h-full flex flex-col bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100">
+    <html lang="zh" suppressHydrationWarning className={`${inter.variable} ${jetbrainsMono.variable} ${playfair.variable} h-full antialiased`}>
+      <body className="min-h-full flex flex-col bg-zinc-50 text-zinc-950">
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

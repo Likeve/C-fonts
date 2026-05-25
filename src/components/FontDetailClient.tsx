@@ -1,16 +1,16 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
-import Link from "next/link";
-import Image from "next/image";
-import { useLanguage } from "@/components/LanguageProvider";
-import { t, vendors } from "@/lib/i18n";
-import { getAssetUrl } from "@/lib/assets";
-import { createClient } from "@/lib/supabase/client";
-import LoginModal from "./LoginModal";
-import PurchaseModal from "./PurchaseModal";
-import type { FontData } from "@/types/font";
-import type { User } from "@supabase/supabase-js";
+import { useState, useEffect, useRef, useCallback } from"react";
+import Link from"next/link";
+import Image from"next/image";
+import { useLanguage } from"@/components/LanguageProvider";
+import { t, vendors } from"@/lib/i18n";
+import { getAssetUrl } from"@/lib/assets";
+import { createClient } from"@/lib/supabase/client";
+import LoginModal from"./LoginModal";
+import PurchaseModal from"./PurchaseModal";
+import type { FontData } from"@/types/font";
+import type { User } from"@supabase/supabase-js";
 
 interface FontDetailClientProps {
   font: FontData;
@@ -19,7 +19,7 @@ interface FontDetailClientProps {
 export default function FontDetailClient({ font }: FontDetailClientProps) {
   const { lang } = useLanguage();
   const [previewText, setPreviewText] = useState(
-    "山重水复疑无路，柳暗花明又一村。"
+"山重水复疑无路，柳暗花明又一村。"
   );
   const [fontLoaded, setFontLoaded] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -27,7 +27,7 @@ export default function FontDetailClient({ font }: FontDetailClientProps) {
   const [user, setUser] = useState<User | null>(null);
   const [authLoading, setAuthLoading] = useState(true);
   const [downloadsInfo, setDownloadsInfo] = useState<{
-    remaining: number | "unlimited";
+    remaining: number |"unlimited";
     freeLimit: number;
     freeDownloadsUsed: number;
     hasUnlimited: boolean;
@@ -72,7 +72,7 @@ export default function FontDetailClient({ font }: FontDetailClientProps) {
 
   useEffect(() => {
     const handleVisibility = () => {
-      if (document.visibilityState === "visible" && user) {
+      if (document.visibilityState ==="visible" && user) {
         fetchDownloadsInfo();
       }
     };
@@ -89,19 +89,19 @@ export default function FontDetailClient({ font }: FontDetailClientProps) {
     setLoading(true);
     setFontLoaded(false);
 
-    const family = font.id.replace(/[^a-zA-Z0-9\u4e00-\u9fff]/g, "-");
+    const family = font.id.replace(/[^a-zA-Z0-9\u4e00-\u9fff]/g,"-");
 
     const style = document.createElement("style");
     style.textContent = `
       @font-face {
-        font-family: "${family}";
+        font-family:"${family}";
         src: url("${fontUrl}");
         font-display: swap;
       }
     `;
     document.head.appendChild(style);
 
-    document.fonts.load(`16px "${family}"`).then(() => {
+    document.fonts.load(`16px"${family}"`).then(() => {
       setFontLoaded(true);
       setLoading(false);
     }).catch(() => {
@@ -114,7 +114,7 @@ export default function FontDetailClient({ font }: FontDetailClientProps) {
   }, [fontUrl, font?.id]);
 
   useEffect(() => {
-    const family = font?.id?.replace(/[^a-zA-Z0-9\u4e00-\u9fff]/g, "-") || "";
+    const family = font?.id?.replace(/[^a-zA-Z0-9\u4e00-\u9fff]/g,"-") ||"";
     if (fontLoaded && previewRef.current && family) {
       previewRef.current.style.fontFamily = `"${family}"`;
     }
@@ -133,7 +133,7 @@ export default function FontDetailClient({ font }: FontDetailClientProps) {
       document.body.removeChild(a);
       URL.revokeObjectURL(blobUrl);
     } catch {
-      window.open(url, "_blank");
+      window.open(url,"_blank");
     }
   };
 
@@ -146,8 +146,8 @@ export default function FontDetailClient({ font }: FontDetailClientProps) {
     setCheckingOut(true);
     try {
       const res = await fetch("/api/user/downloads", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+        method:"POST",
+        headers: {"Content-Type":"application/json" },
         body: JSON.stringify({ fontId: font.id }),
       });
 
@@ -180,9 +180,9 @@ export default function FontDetailClient({ font }: FontDetailClientProps) {
     setCheckingUnlimited(true);
     try {
       const res = await fetch("/api/checkout", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ fontId: font.id, fontName: font.name, plan: "unlimited" }),
+        method:"POST",
+        headers: {"Content-Type":"application/json" },
+        body: JSON.stringify({ fontId: font.id, fontName: font.name, plan:"unlimited" }),
       });
       const data = await res.json();
       if (data.url) {
@@ -194,9 +194,9 @@ export default function FontDetailClient({ font }: FontDetailClientProps) {
     setCheckingUnlimited(false);
   };
 
-  const displayName = lang === "en" ? font.englishName : font.name;
+  const displayName = lang ==="en" ? font.englishName : font.name;
   const cover = getAssetUrl(font.coverPath);
-  const fontFamily = font.id.replace(/[^a-zA-Z0-9\u4e00-\u9fff]/g, "-");
+  const fontFamily = font.id.replace(/[^a-zA-Z0-9\u4e00-\u9fff]/g,"-");
 
   const fontOwned =
     downloadsInfo != null &&
@@ -208,24 +208,24 @@ export default function FontDetailClient({ font }: FontDetailClientProps) {
     : authLoading
       ? t("loading", lang)
       : !user
-        ? lang === "zh"
-          ? "登录后免费下载"
-          : "Sign in to download free"
+        ? lang ==="zh"
+          ?"登录后免费下载"
+          :"Sign in to download free"
         : !downloadsInfo
           ? t("loading", lang)
           : fontOwned
-            ? lang === "zh"
-              ? "再次下载"
-              : "Download again"
+            ? lang ==="zh"
+              ?"再次下载"
+              :"Download again"
             : downloadsInfo.remaining === 0 && !downloadsInfo.hasUnlimited
-              ? lang === "zh"
-                ? "购买下载"
-                : "Buy & Download"
+              ? lang ==="zh"
+                ?"购买下载"
+                :"Buy & Download"
               : downloadsInfo.hasUnlimited
-                ? lang === "zh"
-                  ? "下载字体"
-                  : "Download Font"
-                : lang === "zh"
+                ? lang ==="zh"
+                  ?"下载字体"
+                  :"Download Font"
+                : lang ==="zh"
                   ? `下载字体 (${downloadsInfo.remaining}/${downloadsInfo.freeLimit})`
                   : `Download Font (${downloadsInfo.remaining}/${downloadsInfo.freeLimit})`;
 
@@ -233,7 +233,7 @@ export default function FontDetailClient({ font }: FontDetailClientProps) {
     <div className="mx-auto max-w-4xl px-4 sm:px-6 py-8">
       <Link
         href="/"
-        className="mb-6 inline-flex items-center gap-1 text-sm text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200"
+        className="mb-6 inline-flex items-center gap-1 text-sm text-zinc-500 hover:text-zinc-800"
       >
         <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -249,25 +249,25 @@ export default function FontDetailClient({ font }: FontDetailClientProps) {
             value={previewText}
             onChange={(e) => setPreviewText(e.target.value)}
             rows={2}
-            className="w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 text-sm shadow-sm transition focus:border-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-200 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:focus:border-zinc-500 dark:focus:ring-zinc-700"
+            className="w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 text-sm transition focus:border-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-200"
             placeholder={t("typeToPreview", lang)}
           />
 
-          <div className="mt-6 rounded-xl border border-zinc-200 bg-zinc-50 p-8 dark:border-zinc-800 dark:bg-zinc-900">
+          <div className="mt-6 rounded-xl border border-zinc-200 bg-zinc-50 p-8">
             {loading ? (
               <div className="flex items-center justify-center py-16">
-                <div className="h-6 w-6 animate-spin rounded-full border-2 border-zinc-300 border-t-zinc-600 dark:border-zinc-700 dark:border-t-zinc-400" />
+                <div className="h-6 w-6 animate-spin rounded-full border-2 border-zinc-300 border-t-zinc-600" />
               </div>
             ) : (
               <div
                 ref={previewRef}
-                className="min-h-[200px] break-words text-3xl leading-relaxed text-zinc-900 dark:text-zinc-100"
+                className="min-h-[200px] break-words text-3xl leading-relaxed text-zinc-900"
                 style={{
-                  fontFamily: fontLoaded ? `"${fontFamily}"` : "inherit",
+                  fontFamily: fontLoaded ? `"${fontFamily}"` :"inherit",
                 }}
               >
                 {previewText || (
-                  <span className="text-zinc-300 dark:text-zinc-600">
+                  <span className="text-zinc-300">
                     {t("typeToPreview", lang)}
                   </span>
                 )}
@@ -277,20 +277,20 @@ export default function FontDetailClient({ font }: FontDetailClientProps) {
 
           {fontLoaded && (
             <div className="mt-6 space-y-2">
-              <p className="text-xs text-zinc-400 dark:text-zinc-500">
-                {lang === "zh" ? "字体大小预览" : "Font size preview"}
+              <p className="text-xs text-zinc-400">
+                {lang ==="zh" ?"字体大小预览" :"Font size preview"}
               </p>
               <div className="space-y-3">
-                <p style={{ fontFamily: `"${fontFamily}"`, fontSize: 16 }} className="text-zinc-900 dark:text-zinc-100">
+                <p style={{ fontFamily: `"${fontFamily}"`, fontSize: 16 }} className="text-zinc-900">
                   16px - 中文字体展示 Chinese Font Display
                 </p>
-                <p style={{ fontFamily: `"${fontFamily}"`, fontSize: 24 }} className="text-zinc-900 dark:text-zinc-100">
+                <p style={{ fontFamily: `"${fontFamily}"`, fontSize: 24 }} className="text-zinc-900">
                   24px - 中文字体展示 Chinese Font Display
                 </p>
-                <p style={{ fontFamily: `"${fontFamily}"`, fontSize: 32 }} className="text-zinc-900 dark:text-zinc-100">
+                <p style={{ fontFamily: `"${fontFamily}"`, fontSize: 32 }} className="text-zinc-900">
                   32px - 中文字体展示
                 </p>
-                <p style={{ fontFamily: `"${fontFamily}"`, fontSize: 48 }} className="text-zinc-900 dark:text-zinc-100">
+                <p style={{ fontFamily: `"${fontFamily}"`, fontSize: 48 }} className="text-zinc-900">
                   48px - 字体展示
                 </p>
               </div>
@@ -299,7 +299,7 @@ export default function FontDetailClient({ font }: FontDetailClientProps) {
         </div>
 
         <div className="lg:col-span-2">
-          <div className="relative aspect-[4/3] w-full overflow-hidden rounded-xl bg-zinc-100 dark:bg-zinc-800">
+          <div className="relative aspect-[4/3] w-full overflow-hidden rounded-xl bg-zinc-100">
             {cover ? (
               <Image
                 src={cover}
@@ -311,18 +311,18 @@ export default function FontDetailClient({ font }: FontDetailClientProps) {
               />
             ) : (
               <div className="flex h-full items-center justify-center">
-                <span className="text-7xl text-zinc-300 dark:text-zinc-600">
+                <span className="text-7xl text-zinc-300">
                   {font.name.charAt(0)}
                 </span>
               </div>
             )}
           </div>
 
-          <div className="mt-6 space-y-3 rounded-xl border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-900">
+          <div className="mt-6 space-y-3 rounded-xl border border-zinc-200 bg-white p-4">
             <div className="flex items-center gap-2">
               <h1 className="text-xl font-bold">{displayName}</h1>
-              {font.tag === "no_cover" && (
-                <span className="rounded-full bg-zinc-100 px-2 py-0.5 text-xs font-semibold text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400">
+              {font.tag ==="no_cover" && (
+                <span className="rounded-full bg-zinc-100 px-2 py-0.5 text-xs font-semibold text-zinc-500">
                   {t("noCoverTag", lang)}
                 </span>
               )}
@@ -330,7 +330,7 @@ export default function FontDetailClient({ font }: FontDetailClientProps) {
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
                 <span className="text-zinc-500">{t("category", lang)}</span>
-                <span>{lang === "zh" ? font.categoryZh : font.categoryEn}</span>
+                <span>{lang ==="zh" ? font.categoryZh : font.categoryEn}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-zinc-500">{t("vendor", lang)}</span>
@@ -339,7 +339,7 @@ export default function FontDetailClient({ font }: FontDetailClientProps) {
               <div className="flex justify-between">
                 <span className="text-zinc-500">{t("status", lang)}</span>
                 <span>
-                  {font.tag === "no_cover" ? t("noCoverTag", lang) : t("perfect", lang)}
+                  {font.tag ==="no_cover" ? t("noCoverTag", lang) : t("perfect", lang)}
                 </span>
               </div>
               <div className="flex justify-between">
@@ -355,12 +355,12 @@ export default function FontDetailClient({ font }: FontDetailClientProps) {
                 <button
                   onClick={handleDownload}
                   disabled={checkingOut || authLoading}
-                  className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-zinc-900 px-4 py-3 text-sm font-medium text-white transition-colors hover:bg-zinc-800 disabled:opacity-60 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
+                  className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl border-2 border-[#e6dfd8] bg-transparent px-4 py-3 text-sm font-medium text-zinc-900 transition-colors hover:bg-zinc-50 disabled:opacity-60"
                 >
                   {checkingOut ? (
                     <>
-                      <div className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white dark:border-zinc-900/30 dark:border-t-zinc-900" />
-                      {lang === "zh" ? "处理中..." : "Processing..."}
+                      <div className="h-4 w-4 animate-spin rounded-full border-2 border-zinc-300 border-t-zinc-600" />
+                      {lang ==="zh" ?"处理中..." :"Processing..."}
                     </>
                   ) : (
                     <>
@@ -376,19 +376,19 @@ export default function FontDetailClient({ font }: FontDetailClientProps) {
                   <button
                     onClick={handleUnlimitedPurchase}
                     disabled={checkingUnlimited}
-                    className="flex w-full items-center justify-center gap-2 rounded-xl border-2 border-zinc-900 bg-white px-4 py-3 text-sm font-medium text-zinc-900 transition-colors hover:bg-zinc-50 disabled:opacity-60 dark:border-zinc-100 dark:bg-zinc-900 dark:text-zinc-100 dark:hover:bg-zinc-800"
+                    className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#FEE3C7] px-4 py-3 text-sm font-medium text-black transition-colors hover:bg-[#f5d0a8] disabled:opacity-60"
                   >
                     {checkingUnlimited ? (
                       <>
-                        <div className="h-4 w-4 animate-spin rounded-full border-2 border-zinc-300 border-t-zinc-600 dark:border-zinc-700 dark:border-t-zinc-400" />
-                        {lang === "zh" ? "处理中..." : "Processing..."}
+                        <div className="h-4 w-4 animate-spin rounded-full border-2 border-black/20 border-t-black" />
+                        {lang ==="zh" ?"处理中..." :"Processing..."}
                       </>
                     ) : (
                       <>
                         <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                         </svg>
-                        {lang === "zh" ? "无限制下载" : "Unlimited Downloads"}
+                        {lang ==="zh" ?"无限制下载" :"Unlimited Downloads"}
                         <span className="ml-1 opacity-60">$7.99</span>
                       </>
                     )}
@@ -396,31 +396,31 @@ export default function FontDetailClient({ font }: FontDetailClientProps) {
                 )}
 
                 {user && downloadsInfo?.hasUnlimited && (
-                  <p className="text-center text-xs text-green-600 dark:text-green-400">
-                    {lang === "zh" ? "永久无限制会员" : "Unlimited Member"}
+                  <p className="text-center text-xs text-green-600">
+                    {lang ==="zh" ?"永久无限制会员" :"Unlimited Member"}
                   </p>
                 )}
 
                 {user && fontOwned && !downloadsInfo?.hasUnlimited && (
-                  <p className="text-center text-xs text-blue-600 dark:text-blue-400">
-                    {lang === "zh"
-                      ? "你已拥有此字体，可随时免费下载"
-                      : "You own this font - free to download anytime"}
+                  <p className="text-center text-xs text-blue-600">
+                    {lang ==="zh"
+                      ?"你已拥有此字体，可随时免费下载"
+                      :"You own this font - free to download anytime"}
                   </p>
                 )}
 
                 {!user && !authLoading && (
-                  <p className="text-center text-xs text-zinc-400 dark:text-zinc-500">
-                    {lang === "zh"
-                      ? "登录后可免费下载3款字体"
-                      : "Sign in for 3 free downloads"}
+                  <p className="text-center text-xs text-zinc-400">
+                    {lang ==="zh"
+                      ?"登录后可免费下载3款字体"
+                      :"Sign in for 3 free downloads"}
                   </p>
                 )}
               </>
             )}
 
             {!fontUrl && (
-              <p className="mt-4 text-center text-sm text-zinc-400 dark:text-zinc-500">
+              <p className="mt-4 text-center text-sm text-zinc-400">
                 {t("previewNotAvailable", lang)}
               </p>
             )}

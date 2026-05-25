@@ -1,19 +1,18 @@
 "use client";
 
-import { useLanguage } from "./LanguageProvider";
-import { createClient } from "@/lib/supabase/client";
-import { useRouter } from "next/navigation";
-import Image from "next/image";
-import { useState, useEffect, useCallback } from "react";
-import LoginModal from "./LoginModal";
-import DownloadHistoryModal from "./DownloadHistoryModal";
-import type { User } from "@supabase/supabase-js";
+import { useLanguage } from"./LanguageProvider";
+import { createClient } from"@/lib/supabase/client";
+import { useRouter } from"next/navigation";
+import Image from"next/image";
+import { useState, useEffect, useCallback } from"react";
+import LoginModal from"./LoginModal";
+import type { User } from"@supabase/supabase-js";
 
 interface DownloadsInfo {
   freeDownloadsUsed: number;
   freeLimit: number;
   hasUnlimited: boolean;
-  remaining: number | "unlimited";
+  remaining: number |"unlimited";
 }
 
 export function UserMenu() {
@@ -22,7 +21,6 @@ export function UserMenu() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [showLoginModal, setShowLoginModal] = useState(false);
-  const [showHistoryModal, setShowHistoryModal] = useState(false);
   const [downloadsInfo, setDownloadsInfo] = useState<DownloadsInfo | null>(null);
 
   const fetchDownloadsInfo = useCallback(() => {
@@ -63,7 +61,7 @@ export function UserMenu() {
 
   useEffect(() => {
     const handleVisibility = () => {
-      if (document.visibilityState === "visible" && user) {
+      if (document.visibilityState ==="visible" && user) {
         fetchDownloadsInfo();
       }
     };
@@ -80,9 +78,9 @@ export function UserMenu() {
 
   const statusLabel = downloadsInfo
     ? downloadsInfo.hasUnlimited
-      ? "Unlimited"
-      : `${typeof downloadsInfo.remaining === "number" ? downloadsInfo.remaining : downloadsInfo.freeLimit}/${downloadsInfo.freeLimit}`
-    : "";
+      ?"Unlimited"
+      : `${typeof downloadsInfo.remaining ==="number" ? downloadsInfo.remaining : downloadsInfo.freeLimit}/${downloadsInfo.freeLimit}`
+    :"";
 
   return (
     <div className="flex items-center gap-3">
@@ -90,58 +88,58 @@ export function UserMenu() {
         <>
           {user ? (
             <div className="group relative">
-              <button className="relative flex items-center gap-2 rounded-full p-0.5 transition-colors hover:ring-2 hover:ring-zinc-200 dark:hover:ring-zinc-700">
+              <button className="relative flex items-center gap-2 rounded-full p-0.5 transition-colors hover:ring-2 hover:ring-zinc-200">
                 {user.user_metadata?.avatar_url ? (
                   <Image
                     src={user.user_metadata.avatar_url}
-                    alt={user.user_metadata?.full_name ?? "Avatar"}
+                    alt={user.user_metadata?.full_name ??"Avatar"}
                     width={32}
                     height={32}
                     className="rounded-full"
                     referrerPolicy="no-referrer"
                   />
                 ) : (
-                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-zinc-200 text-sm font-medium text-zinc-600 dark:bg-zinc-700 dark:text-zinc-300">
-                    {(user.user_metadata?.full_name ?? user.email ?? "U").charAt(0).toUpperCase()}
+                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-zinc-200 text-sm font-medium text-zinc-600">
+                    {(user.user_metadata?.full_name ?? user.email ??"U").charAt(0).toUpperCase()}
                   </div>
                 )}
                 {downloadsInfo?.hasUnlimited && (
-                  <span className="absolute -bottom-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-green-500 text-[10px] font-bold text-white ring-2 ring-white dark:ring-zinc-900">
+                  <span className="absolute -bottom-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-green-500 text-[10px] font-bold text-white ring-2 ring-white">
                     ∞
                   </span>
                 )}
                 {downloadsInfo && !downloadsInfo.hasUnlimited && downloadsInfo.freeDownloadsUsed > 0 && (
-                  <span className="absolute -bottom-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-amber-500 text-[10px] font-bold text-white ring-2 ring-white dark:ring-zinc-900">
+                  <span className="absolute -bottom-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-amber-500 text-[10px] font-bold text-white ring-2 ring-white">
                     {Math.max(0, downloadsInfo.freeLimit - downloadsInfo.freeDownloadsUsed)}
                   </span>
                 )}
               </button>
 
-              <div className="invisible absolute right-0 top-full mt-2 w-48 rounded-xl border border-zinc-200 bg-white py-1.5 shadow-lg opacity-0 transition-all duration-150 group-hover:visible group-hover:opacity-100 dark:border-zinc-700 dark:bg-zinc-800">
+              <div className="invisible absolute right-0 top-full mt-2 w-48 rounded-xl border border-zinc-200 bg-white py-1.5 shadow-lg opacity-0 transition-all duration-150 group-hover:visible group-hover:opacity-100">
                 <div className="px-4 py-2">
-                  <p className="truncate text-sm font-medium text-zinc-900 dark:text-zinc-100">
+                  <p className="truncate text-sm font-medium text-zinc-900">
                     {user.user_metadata?.full_name ?? user.email}
                   </p>
                   {downloadsInfo && (
                     <p
                       className={`mt-0.5 text-xs font-medium ${
                         downloadsInfo.hasUnlimited
-                          ? "text-green-600 dark:text-green-400"
-                          : "text-zinc-500 dark:text-zinc-400"
+                          ?"text-green-600"
+                          :"text-zinc-500"
                       }`}
                     >
                       {downloadsInfo.hasUnlimited
-                        ? lang === "zh"
-                          ? "Unlimited 会员"
-                          : "Unlimited"
+                        ? lang ==="zh"
+                          ?"Unlimited 会员"
+                          :"Unlimited"
                         : `Limited ${statusLabel}`}
                     </p>
                   )}
                 </div>
-                <div className="mx-4 my-1.5 border-t border-zinc-100 dark:border-zinc-700" />
+                <div className="mx-4 my-1.5 border-t border-zinc-100" />
                 <button
-                  onClick={() => setShowHistoryModal(true)}
-                  className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-zinc-600 transition-colors hover:bg-zinc-50 dark:text-zinc-400 dark:hover:bg-zinc-700"
+                  onClick={() => router.push("/downloads")}
+                  className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-zinc-600 transition-colors hover:bg-zinc-50"
                 >
                   <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path
@@ -151,11 +149,11 @@ export function UserMenu() {
                       d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
                     />
                   </svg>
-                  {lang === "zh" ? "下载记录" : "Download History"}
+                  {lang ==="zh" ?"下载记录" :"Download History"}
                 </button>
                 <button
                   onClick={handleSignOut}
-                  className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-zinc-600 transition-colors hover:bg-zinc-50 dark:text-zinc-400 dark:hover:bg-zinc-700"
+                  className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-zinc-600 transition-colors hover:bg-zinc-50"
                 >
                   <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path
@@ -165,16 +163,16 @@ export function UserMenu() {
                       d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
                     />
                   </svg>
-                  {lang === "zh" ? "退出登录" : "Sign out"}
+                  {lang ==="zh" ?"退出登录" :"Sign out"}
                 </button>
               </div>
             </div>
           ) : (
             <button
               onClick={() => setShowLoginModal(true)}
-              className="rounded-lg bg-white px-3 py-1.5 text-sm font-medium text-zinc-900 shadow-sm transition-colors hover:bg-zinc-50 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
+              className="rounded-lg bg-white px-3 py-1.5 text-sm font-medium text-zinc-900 shadow-sm transition-colors hover:bg-zinc-50"
             >
-              {lang === "zh" ? "登录" : "Sign in"}
+              {lang ==="zh" ?"登录" :"Sign in"}
             </button>
           )}
         </>
@@ -183,10 +181,6 @@ export function UserMenu() {
       <LoginModal
         open={showLoginModal}
         onClose={() => setShowLoginModal(false)}
-      />
-      <DownloadHistoryModal
-        open={showHistoryModal}
-        onClose={() => setShowHistoryModal(false)}
       />
     </div>
   );

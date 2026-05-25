@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
-import { createPortal } from "react-dom";
-import { useLanguage } from "@/components/LanguageProvider";
-import { createClient } from "@/lib/supabase/client";
+import { useState } from"react";
+import { createPortal } from"react-dom";
+import { useLanguage } from"@/components/LanguageProvider";
+import { createClient } from"@/lib/supabase/client";
 
 interface LoginModalProps {
   open: boolean;
@@ -25,36 +25,36 @@ export default function LoginModal({ open, onClose, redirect }: LoginModalProps)
       const supabase = createClient();
       const next = redirect || window.location.pathname + window.location.search;
       const { error } = await supabase.auth.signInWithOAuth({
-        provider: "google",
+        provider:"google",
         options: {
           redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(next)}`,
         },
       });
       if (error) throw error;
     } catch (err) {
-      setError(err instanceof Error ? err.message : "auth_failed");
+      setError(err instanceof Error ? err.message :"auth_failed");
       setLoading(false);
     }
   };
 
   return createPortal(
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
-      <div className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-xl dark:bg-zinc-900">
+      <div className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-xl">
         <div className="mb-6 text-center">
-          <h2 className="text-xl font-bold text-zinc-900 dark:text-zinc-100">
-            {lang === "zh" ? "登录中文字体库" : "Sign in to Chinese Fonts"}
+          <h2 className="text-xl font-bold text-zinc-900">
+            {lang ==="zh" ?"登录中文字体库" :"Sign in to Chinese Fonts"}
           </h2>
-          <p className="mt-2 text-sm text-zinc-500 dark:text-zinc-400">
-            {lang === "zh"
-              ? "使用 Google 账号登录，新用户免费下载3款字体"
-              : "Sign in with Google, new users get 3 free downloads"}
+          <p className="mt-2 text-sm text-zinc-500">
+            {lang ==="zh"
+              ?"使用 Google 账号登录，新用户免费下载3款字体"
+              :"Sign in with Google, new users get 3 free downloads"}
           </p>
         </div>
 
         <button
           onClick={handleGoogleLogin}
           disabled={loading}
-          className="flex w-full items-center justify-center gap-3 rounded-lg border border-zinc-300 bg-white px-6 py-3 text-sm font-medium text-zinc-700 shadow-sm transition-colors hover:bg-zinc-50 disabled:opacity-50 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700"
+          className="flex w-full items-center justify-center gap-3 rounded-lg border border-zinc-300 bg-white px-6 py-3 text-sm font-medium text-zinc-700 shadow-sm transition-colors hover:bg-zinc-50 disabled:opacity-50"
         >
           <svg className="h-5 w-5" viewBox="0 0 24 24">
             <path
@@ -75,25 +75,25 @@ export default function LoginModal({ open, onClose, redirect }: LoginModalProps)
             />
           </svg>
           {loading
-            ? lang === "zh"
-              ? "正在跳转..."
-              : "Redirecting..."
-            : lang === "zh"
-              ? "使用 Google 账号登录"
-              : "Sign in with Google"}
+            ? lang ==="zh"
+              ?"正在跳转..."
+              :"Redirecting..."
+            : lang ==="zh"
+              ?"使用 Google 账号登录"
+              :"Sign in with Google"}
         </button>
 
         {error && (
-          <p className="mt-4 text-center text-sm text-red-600 dark:text-red-400">
-            {lang === "zh" ? "登录失败，请重试" : "Sign in failed, please try again"}
+          <p className="mt-4 text-center text-sm text-red-600">
+            {lang ==="zh" ?"登录失败，请重试" :"Sign in failed, please try again"}
           </p>
         )}
 
         <button
           onClick={onClose}
-          className="mt-4 w-full rounded-xl py-2.5 text-sm font-medium text-zinc-500 transition-colors hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200"
+          className="mt-4 w-full rounded-xl py-2.5 text-sm font-medium text-zinc-500 transition-colors hover:text-zinc-700"
         >
-          {lang === "zh" ? "暂不考虑" : "Maybe later"}
+          {lang ==="zh" ?"暂不考虑" :"Maybe later"}
         </button>
       </div>
     </div>,

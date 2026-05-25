@@ -1,12 +1,12 @@
 "use client";
 
-import { useState, useMemo } from "react";
-import Link from "next/link";
-import Image from "next/image";
-import { useLanguage } from "@/components/LanguageProvider";
-import { t, vendors } from "@/lib/i18n";
-import { getAssetUrl } from "@/lib/assets";
-import type { FontData, CategoryData } from "@/types/font";
+import { useState, useMemo } from"react";
+import Link from"next/link";
+import Image from"next/image";
+import { useLanguage } from"@/components/LanguageProvider";
+import { t, vendors } from"@/lib/i18n";
+import { getAssetUrl } from"@/lib/assets";
+import type { FontData, CategoryData } from"@/types/font";
 
 interface HomeClientProps {
   fonts: FontData[];
@@ -23,7 +23,7 @@ export default function HomeClient({ fonts, categories }: HomeClientProps) {
 
   const filtered = useMemo(() => {
     let result = fonts;
-    if (activeCategory !== "all") {
+    if (activeCategory !=="all") {
       result = result.filter((f) => f.category === activeCategory);
     }
     if (search.trim()) {
@@ -54,8 +54,8 @@ export default function HomeClient({ fonts, categories }: HomeClientProps) {
     setPage(1);
   };
 
-  const getPageNumbers = (): (number | "...")[] => {
-    const pages: (number | "...")[] = [];
+  const getPageNumbers = (): (number |"...")[] => {
+    const pages: (number |"...")[] = [];
     if (totalPages <= 7) {
       for (let i = 1; i <= totalPages; i++) pages.push(i);
     } else {
@@ -71,7 +71,7 @@ export default function HomeClient({ fonts, categories }: HomeClientProps) {
   };
 
   return (
-    <div className="mx-auto max-w-7xl px-4 sm:px-6 py-8">
+    <div className="mx-auto max-w-[1440px] px-4 sm:px-6 py-8">
       <section className="mb-8">
         <div className="relative mb-6">
           <label htmlFor="font-search" className="sr-only">
@@ -83,7 +83,7 @@ export default function HomeClient({ fonts, categories }: HomeClientProps) {
             value={search}
             onChange={(e) => handleSearchChange(e.target.value)}
             placeholder={t("searchPlaceholder", lang)}
-            className="w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 pl-11 text-sm shadow-sm transition focus:border-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-200 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:focus:border-zinc-500 dark:focus:ring-zinc-700"
+            className="w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 pl-11 text-sm transition focus:border-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-200"
           />
           <svg
             className="absolute left-3.5 top-3.5 h-5 w-5 text-zinc-400"
@@ -101,19 +101,19 @@ export default function HomeClient({ fonts, categories }: HomeClientProps) {
           </svg>
         </div>
 
-        <p className="mb-3 text-sm text-zinc-500 dark:text-zinc-400">
-          {filtered.length} {lang === "zh" ? "个结果" : "results"}
+        <p className="mb-3 text-sm text-zinc-500">
+          {filtered.length} {lang ==="zh" ?"个结果" :"results"}
         </p>
 
         <nav aria-label={t("categories", lang)} className="flex flex-wrap gap-2">
           <button
             onClick={() => handleCategoryChange("all")}
-            className={`rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
-              activeCategory === "all"
-                ? "bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900"
-                : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-400 dark:hover:bg-zinc-700"
+            className={`rounded-lg px-3.5 py-2 text-sm font-medium transition-colors ${
+              activeCategory ==="all"
+                ?"bg-[#efe9de] text-zinc-800"
+                :"text-zinc-500 hover:bg-zinc-100"
             }`}
-            aria-current={activeCategory === "all" ? "page" : undefined}
+            aria-current={activeCategory ==="all" ?"page" : undefined}
           >
             {t("allFonts", lang)}
           </button>
@@ -121,14 +121,14 @@ export default function HomeClient({ fonts, categories }: HomeClientProps) {
             <button
               key={cat.slug}
               onClick={() => handleCategoryChange(cat.slug)}
-              className={`rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
+              className={`rounded-lg px-3.5 py-2 text-sm font-medium transition-colors ${
                 activeCategory === cat.slug
-                  ? "bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900"
-                  : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-400 dark:hover:bg-zinc-700"
+                  ?"bg-[#efe9de] text-zinc-800"
+                  :"text-zinc-500 hover:bg-zinc-100"
               }`}
-              aria-current={activeCategory === cat.slug ? "page" : undefined}
+              aria-current={activeCategory === cat.slug ?"page" : undefined}
             >
-              {lang === "zh" ? cat.zh : cat.en} ({cat.count})
+              {lang ==="zh" ? cat.zh : cat.en} ({cat.count})
             </button>
           ))}
         </nav>
@@ -136,11 +136,11 @@ export default function HomeClient({ fonts, categories }: HomeClientProps) {
 
       {filtered.length === 0 ? (
         <div className="py-24 text-center text-zinc-400">
-          <p className="text-lg">{lang === "zh" ? "没有找到匹配的字体" : "No fonts found"}</p>
+          <p className="text-lg">{lang ==="zh" ?"没有找到匹配的字体" :"No fonts found"}</p>
         </div>
       ) : (
         <section>
-          <h2 className="sr-only">{lang === "zh" ? "字体列表" : "Font List"}</h2>
+          <h2 className="sr-only">{lang ==="zh" ?"字体列表" :"Font List"}</h2>
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
             {pageFonts.map((font) => {
               const cover = getAssetUrl(font.coverPath);
@@ -148,14 +148,14 @@ export default function HomeClient({ fonts, categories }: HomeClientProps) {
                 <Link
                   key={font.id}
                   href={`/fonts/${encodeURIComponent(font.id)}`}
-                  className="group relative flex flex-col overflow-hidden rounded-xl border border-zinc-200 bg-white transition-all hover:border-zinc-300 hover:shadow-md dark:border-zinc-800 dark:bg-zinc-900 dark:hover:border-zinc-700"
+                  className="group relative flex flex-col overflow-hidden rounded-lg border border-[#e6dfd8] bg-[#efe9de] transition-all duration-300 hover:-translate-y-0.5"
                 >
-                  {font.tag === "no_cover" && (
-                    <div className="absolute right-2 top-2 z-10 rounded-full bg-zinc-100 px-2 py-0.5 text-[10px] font-semibold text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400">
+                  {font.tag ==="no_cover" && (
+                    <div className="absolute right-2 top-2 z-10 rounded-full bg-white/60 px-2 py-0.5 text-[10px] font-medium text-zinc-600 backdrop-blur-sm">
                       {t("noCoverTag", lang)}
                     </div>
                   )}
-                  <div className="relative aspect-[4/3] w-full overflow-hidden bg-zinc-100 dark:bg-zinc-800">
+                  <div className="relative aspect-[4/3] w-full overflow-hidden bg-zinc-50">
                     {cover ? (
                       <Image
                         src={cover}
@@ -167,17 +167,17 @@ export default function HomeClient({ fonts, categories }: HomeClientProps) {
                       />
                     ) : (
                       <div className="flex h-full items-center justify-center">
-                        <span className="text-4xl text-zinc-300 dark:text-zinc-600">
+                        <span className="text-4xl text-zinc-400/50">
                           {font.name.charAt(0)}
                         </span>
                       </div>
                     )}
                   </div>
-                  <div className="flex flex-col gap-0.5 p-3">
-                    <h3 className="truncate text-sm font-medium text-zinc-900 dark:text-zinc-100">
-                      {lang === "en" ? font.englishName : font.name}
+                  <div className="flex flex-col gap-0.5 p-4">
+                    <h3 className="truncate text-sm font-medium text-zinc-800">
+                      {lang ==="en" ? font.englishName : font.name}
                     </h3>
-                    <p className="truncate text-xs text-zinc-500 dark:text-zinc-400">
+                    <p className="truncate text-xs text-zinc-500">
                       {vendors[font.vendor]?.[lang] || font.vendor}
                     </p>
                   </div>
@@ -191,7 +191,7 @@ export default function HomeClient({ fonts, categories }: HomeClientProps) {
               <button
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
                 disabled={currentPage === 1}
-                className="rounded-lg px-3 py-2 text-sm font-medium text-zinc-600 transition-colors hover:bg-zinc-100 disabled:cursor-not-allowed disabled:opacity-30 dark:text-zinc-400 dark:hover:bg-zinc-800"
+                className="rounded-lg px-3 py-2 text-sm font-medium text-zinc-600 transition-colors hover:bg-zinc-100 disabled:cursor-not-allowed disabled:opacity-30"
               >
                 <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -199,8 +199,8 @@ export default function HomeClient({ fonts, categories }: HomeClientProps) {
               </button>
 
               {getPageNumbers().map((p, i) =>
-                p === "..." ? (
-                  <span key={`dots-${i}`} className="px-2 text-sm text-zinc-400 dark:text-zinc-500">
+                p ==="..." ? (
+                  <span key={`dots-${i}`} className="px-2 text-sm text-zinc-400">
                     ...
                   </span>
                 ) : (
@@ -209,8 +209,8 @@ export default function HomeClient({ fonts, categories }: HomeClientProps) {
                     onClick={() => setPage(p)}
                     className={`rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
                       p === currentPage
-                        ? "bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900"
-                        : "text-zinc-600 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800"
+                        ?"bg-zinc-900 text-white"
+                        :"text-zinc-600 hover:bg-zinc-100"
                     }`}
                   >
                     {p}
@@ -221,7 +221,7 @@ export default function HomeClient({ fonts, categories }: HomeClientProps) {
               <button
                 onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                 disabled={currentPage === totalPages}
-                className="rounded-lg px-3 py-2 text-sm font-medium text-zinc-600 transition-colors hover:bg-zinc-100 disabled:cursor-not-allowed disabled:opacity-30 dark:text-zinc-400 dark:hover:bg-zinc-800"
+                className="rounded-lg px-3 py-2 text-sm font-medium text-zinc-600 transition-colors hover:bg-zinc-100 disabled:cursor-not-allowed disabled:opacity-30"
               >
                 <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />

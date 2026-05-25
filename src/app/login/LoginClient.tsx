@@ -1,15 +1,15 @@
 "use client";
 
-import { useLanguage } from "@/components/LanguageProvider";
-import { t } from "@/lib/i18n";
-import { createClient } from "@/lib/supabase/client";
-import { useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { useLanguage } from"@/components/LanguageProvider";
+import { t } from"@/lib/i18n";
+import { createClient } from"@/lib/supabase/client";
+import { useSearchParams } from"next/navigation";
+import { useState } from"react";
 
 export default function LoginClient() {
   const { lang } = useLanguage();
   const searchParams = useSearchParams();
-  const redirect = searchParams.get("redirect") || "/";
+  const redirect = searchParams.get("redirect") ||"/";
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -19,14 +19,14 @@ export default function LoginClient() {
     try {
       const supabase = createClient();
       const { error } = await supabase.auth.signInWithOAuth({
-        provider: "google",
+        provider:"google",
         options: {
           redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(redirect)}`,
         },
       });
       if (error) throw error;
     } catch (err) {
-      setError(err instanceof Error ? err.message : "auth_failed");
+      setError(err instanceof Error ? err.message :"auth_failed");
       setLoading(false);
     }
   };
@@ -34,19 +34,19 @@ export default function LoginClient() {
   return (
     <div className="flex min-h-[60vh] items-center justify-center px-4">
       <div className="w-full max-w-sm text-center">
-        <h1 className="text-2xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100 mb-2">
-          {lang === "zh" ? "登录中文字体库" : "Sign in to Chinese Fonts"}
+        <h1 className="text-2xl font-bold tracking-tight text-zinc-900 mb-2">
+          {lang ==="zh" ?"登录中文字体库" :"Sign in to Chinese Fonts"}
         </h1>
-        <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-8">
-          {lang === "zh"
-            ? "使用 Google 账号登录，新用户免费下载3款字体"
-            : "Sign in with Google, new users get 3 free downloads"}
+        <p className="text-sm text-zinc-500 mb-8">
+          {lang ==="zh"
+            ?"使用 Google 账号登录，新用户免费下载3款字体"
+            :"Sign in with Google, new users get 3 free downloads"}
         </p>
 
         <button
           onClick={handleGoogleLogin}
           disabled={loading}
-          className="inline-flex items-center gap-3 rounded-lg border border-zinc-300 bg-white px-6 py-3 text-sm font-medium text-zinc-700 shadow-sm transition-colors hover:bg-zinc-50 disabled:opacity-50 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800"
+          className="inline-flex items-center gap-3 rounded-lg border border-zinc-300 bg-white px-6 py-3 text-sm font-medium text-zinc-700 shadow-sm transition-colors hover:bg-zinc-50 disabled:opacity-50"
         >
           <svg className="h-5 w-5" viewBox="0 0 24 24">
             <path
@@ -67,17 +67,17 @@ export default function LoginClient() {
             />
           </svg>
           {loading
-            ? lang === "zh"
-              ? "正在跳转..."
-              : "Redirecting..."
-            : lang === "zh"
-              ? "使用 Google 账号登录"
-              : "Sign in with Google"}
+            ? lang ==="zh"
+              ?"正在跳转..."
+              :"Redirecting..."
+            : lang ==="zh"
+              ?"使用 Google 账号登录"
+              :"Sign in with Google"}
         </button>
 
         {error && (
-          <p className="mt-4 text-sm text-red-600 dark:text-red-400">
-            {lang === "zh" ? "登录失败，请重试" : "Sign in failed, please try again"}
+          <p className="mt-4 text-sm text-red-600">
+            {lang ==="zh" ?"登录失败，请重试" :"Sign in failed, please try again"}
           </p>
         )}
       </div>

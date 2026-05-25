@@ -1,11 +1,11 @@
-import type { Metadata } from "next";
-import { notFound } from "next/navigation";
-import fontsData from "@/data/fonts.json";
-import type { FontsJson } from "@/types/font";
-import FontDetailClient from "@/components/FontDetailClient";
+import type { Metadata } from"next";
+import { notFound } from"next/navigation";
+import fontsData from"@/data/fonts.json";
+import type { FontsJson } from"@/types/font";
+import FontDetailClient from"@/components/FontDetailClient";
 
 const data = fontsData as FontsJson;
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.cfont.site";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ||"https://www.cfont.site";
 
 export function generateStaticParams() {
   return data.fonts.map((font) => ({
@@ -24,15 +24,15 @@ export async function generateMetadata({
 
   if (!font) {
     return {
-      title: "字体未找到",
-      description: "请求的字体不存在。",
+      title:"字体未找到",
+      description:"请求的字体不存在。",
     };
   }
 
   return {
     title: `${font.name} - ${font.englishName}`,
     description: `${font.name} (${font.englishName}) - ${font.categoryZh} | 中文字体库免费在线预览与下载。${font.categoryEn} Chinese font, free preview and download.`,
-    keywords: [font.name, font.englishName, font.categoryZh, font.categoryEn, "中文字体", "字体下载", "字体预览"],
+    keywords: [font.name, font.englishName, font.categoryZh, font.categoryEn,"中文字体","字体下载","字体预览"],
     alternates: {
       canonical: `${siteUrl}/fonts/${encodeURIComponent(font.id)}`,
     },
@@ -40,7 +40,7 @@ export async function generateMetadata({
       title: `${font.name} - ${font.englishName} | 中文字体库`,
       description: `${font.name} (${font.englishName}) - ${font.categoryZh} | 免费在线预览与下载`,
       url: `${siteUrl}/fonts/${encodeURIComponent(font.id)}`,
-      type: "article",
+      type:"article",
       images: font.coverPath
         ? [
             {
@@ -53,7 +53,7 @@ export async function generateMetadata({
         : [],
     },
     twitter: {
-      card: "summary_large_image",
+      card:"summary_large_image",
       title: `${font.name} - ${font.englishName}`,
       description: `${font.name} (${font.englishName}) - ${font.categoryZh} | 免费预览与下载`,
       images: font.coverPath

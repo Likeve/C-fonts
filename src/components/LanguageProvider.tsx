@@ -6,15 +6,19 @@ import { Lang } from "@/lib/i18n";
 interface LanguageContextType {
   lang: Lang;
   setLang: (lang: Lang) => void;
-  toggleLang: () => void;
   label: string;
 }
+
+const langLabels: Record<Lang, string> = {
+  zh: "简体中文",
+  "zh-Hant": "繁體中文",
+  en: "English",
+};
 
 const LanguageContext = createContext<LanguageContextType>({
   lang: "en",
   setLang: () => {},
-  toggleLang: () => {},
-  label: "中文",
+  label: "English",
 });
 
 export function useLanguage() {
@@ -26,7 +30,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const saved = localStorage.getItem("lang") as Lang | null;
-    if (saved === "zh" || saved === "en") {
+    if (saved === "zh" || saved === "zh-Hant" || saved === "en") {
       setLangState(saved);
     }
   }, []);
@@ -36,14 +40,10 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     localStorage.setItem("lang", l);
   }, []);
 
-  const toggleLang = useCallback(() => {
-    setLang(lang === "zh" ? "en" : "zh");
-  }, [lang, setLang]);
-
-  const label = lang === "zh" ? "EN" : "中文";
+  const label = langLabels[lang];
 
   return (
-    <LanguageContext.Provider value={{ lang, setLang, toggleLang, label }}>
+    <LanguageContext.Provider value={{ lang, setLang, label }}>
       {children}
     </LanguageContext.Provider>
   );

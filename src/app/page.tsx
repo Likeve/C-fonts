@@ -1,11 +1,11 @@
-import type { Metadata } from "next";
-import fontsData from "@/data/fonts.json";
-import type { FontsJson } from "@/types/font";
-import HomeClient from "@/components/HomeClient";
+import type { Metadata } from"next";
+import fontsData from"@/data/fonts.json";
+import type { FontsJson } from"@/types/font";
+import HomeClient from"@/components/HomeClient";
 
 export const metadata: Metadata = {
   alternates: {
-    canonical: "/",
+    canonical:"/",
   },
 };
 

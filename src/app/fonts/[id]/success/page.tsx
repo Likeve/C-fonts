@@ -1,7 +1,7 @@
-import type { Metadata } from "next";
-import fontsData from "@/data/fonts.json";
-import type { FontsJson } from "@/types/font";
-import FontSuccessClient from "@/components/FontSuccessClient";
+import type { Metadata } from"next";
+import fontsData from"@/data/fonts.json";
+import type { FontsJson } from"@/types/font";
+import FontSuccessClient from"@/components/FontSuccessClient";
 
 const data = fontsData as FontsJson;
 
@@ -17,7 +17,7 @@ export async function generateMetadata({
   return {
     title: font
       ? `购买成功 - ${font.name}`
-      : "支付结果",
+      :"支付结果",
     robots: {
       index: false,
       follow: false,

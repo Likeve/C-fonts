@@ -20,6 +20,7 @@ export default function SuccessContent() {
   const [status, setStatus] = useState<"verifying" | "paid" | "error">(
     sessionId ? "verifying" : "paid"
   );
+  const [plan, setPlan] = useState<string>("single");
 
   const font = fontId
     ? data.fonts.find((f) => f.id === decodeURIComponent(fontId))
@@ -34,7 +35,9 @@ export default function SuccessContent() {
     try {
       const res = await fetch(`/api/verify?session_id=${sessionId}`);
       if (res.ok) {
+        const data = await res.json();
         setStatus("paid");
+        setPlan(data.plan || "single");
       } else {
         setStatus("error");
       }
@@ -50,7 +53,7 @@ export default function SuccessContent() {
   }, [sessionId, verifyPayment]);
 
   useEffect(() => {
-    if (status === "paid" && fontUrl && !downloadTriggered.current) {
+    if (status === "paid" && fontUrl && !downloadTriggered.current && plan !== "unlimited") {
       downloadTriggered.current = true;
       const a = document.createElement("a");
       a.href = fontUrl;
@@ -116,30 +119,46 @@ export default function SuccessContent() {
           <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100">
             {lang === "zh" ? "支付成功" : "Payment Successful"}
           </h1>
-          <p className="mt-3 text-zinc-500 dark:text-zinc-400">
-            {lang === "zh"
-              ? `感谢购买 ${displayName}！点击下方按钮下载字体文件。`
-              : `Thank you for purchasing ${displayName}! Click below to download.`}
-          </p>
+          {plan === "unlimited" ? (
+            <p className="mt-3 text-zinc-500 dark:text-zinc-400">
+              {lang === "zh"
+                ? "您已升级为 Unlimited 会员，现在可以无限制下载所有字体！"
+                : "You are now an Unlimited member. Download any font on the site without limits!"}
+            </p>
+          ) : (
+            <p className="mt-3 text-zinc-500 dark:text-zinc-400">
+              {lang === "zh"
+                ? `感谢购买 ${displayName}！点击下方按钮下载字体文件。`
+                : `Thank you for purchasing ${displayName}! Click below to download.`}
+            </p>
+          )}
           <div className="mt-8 space-y-3">
-            <a
-              href={fontUrl}
-              download={`${font.name}.ttf`}
-              className="flex w-full items-center justify-center gap-2 rounded-xl bg-zinc-900 px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
-            >
-              <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-              </svg>
-              {lang === "zh" ? `下载 ${font.name}.ttf` : `Download ${font.name}.ttf`}
-            </a>
+            {plan !== "unlimited" && (
+              <a
+                href={fontUrl}
+                download={`${font.name}.ttf`}
+                className="flex w-full items-center justify-center gap-2 rounded-xl bg-zinc-900 px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
+              >
+                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                {lang === "zh" ? `下载 ${font.name}.ttf` : `Download ${font.name}.ttf`}
+              </a>
+            )}
             <Link
-              href={`/fonts/${encodeURIComponent(font.id)}`}
+              href={plan === "unlimited" ? "/" : `/fonts/${encodeURIComponent(font.id)}`}
               className="inline-flex items-center gap-1 text-sm text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200"
             >
               <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
               </svg>
-              {lang === "zh" ? "返回字体详情" : "Back to Font"}
+              {plan === "unlimited"
+                ? lang === "zh"
+                  ? "返回首页"
+                  : "Back to Home"
+                : lang === "zh"
+                  ? "返回字体详情"
+                  : "Back to Font"}
             </Link>
           </div>
         </>

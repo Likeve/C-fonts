@@ -2,7 +2,31 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { getAssetUrl } from "@/lib/assets";
 
-const FREE_LIMIT = 3;
+const DEFAULT_FREE_LIMIT = 3;
+
+async function getPlanData(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  userId: string
+): Promise<{ plan: string; free_download_limit?: number } | null> {
+  const { data, error } = await supabase
+    .from("user_plans")
+    .select("plan, free_download_limit")
+    .eq("user_id", userId)
+    .single();
+
+  if (!error && data) return data;
+
+  if (error) {
+    const { data: fallback } = await supabase
+      .from("user_plans")
+      .select("plan")
+      .eq("user_id", userId)
+      .single();
+    return fallback as { plan: string } | null;
+  }
+
+  return null;
+}
 
 export async function GET() {
   const supabase = await createClient();
@@ -14,25 +38,22 @@ export async function GET() {
     return NextResponse.json({ error: "not_authenticated" }, { status: 401 });
   }
 
-  const [{ data: downloads }, { data: planData }] = await Promise.all([
+  const [{ data: downloads }, planData] = await Promise.all([
     supabase
       .from("user_downloads")
       .select("font_id")
       .eq("user_id", user.id),
-    supabase
-      .from("user_plans")
-      .select("plan")
-      .eq("user_id", user.id)
-      .single(),
+    getPlanData(supabase, user.id),
   ]);
 
   const hasUnlimited = planData?.plan === "unlimited";
+  const freeLimit = planData?.free_download_limit ?? DEFAULT_FREE_LIMIT;
   const freeDownloadsUsed = downloads?.length ?? 0;
-  const remaining = hasUnlimited ? "unlimited" : Math.max(0, FREE_LIMIT - freeDownloadsUsed);
+  const remaining = hasUnlimited ? "unlimited" : Math.max(0, freeLimit - freeDownloadsUsed);
 
   return NextResponse.json({
     freeDownloadsUsed,
-    freeLimit: FREE_LIMIT,
+    freeLimit,
     hasUnlimited,
     remaining,
   });
@@ -55,7 +76,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Missing fontId" }, { status: 400 });
   }
 
-  // Check if already downloaded this font
   const { data: existing } = await supabase
     .from("user_downloads")
     .select("id")
@@ -64,7 +84,6 @@ export async function POST(request: NextRequest) {
     .single();
 
   if (existing) {
-    // Already downloaded, allow re-download without counting
     const fontPath = `fonts/${fontId}.ttf`;
     const downloadUrl = getAssetUrl(fontPath);
     return NextResponse.json({
@@ -74,22 +93,18 @@ export async function POST(request: NextRequest) {
     });
   }
 
-  // Check plan and remaining downloads
-  const { data: planData } = await supabase
-    .from("user_plans")
-    .select("plan")
-    .eq("user_id", user.id)
-    .single();
+  const planData = await getPlanData(supabase, user.id);
 
   const hasUnlimited = planData?.plan === "unlimited";
 
   if (!hasUnlimited) {
+    const freeLimit = planData?.free_download_limit ?? DEFAULT_FREE_LIMIT;
     const { count } = await supabase
       .from("user_downloads")
       .select("id", { count: "exact", head: true })
       .eq("user_id", user.id);
 
-    if ((count ?? 0) >= FREE_LIMIT) {
+    if ((count ?? 0) >= freeLimit) {
       return NextResponse.json(
         { error: "no_free_downloads", freeDownloadsUsed: count },
         { status: 402 }
@@ -97,7 +112,6 @@ export async function POST(request: NextRequest) {
     }
   }
 
-  // Record the download
   const { error: insertError } = await supabase
     .from("user_downloads")
     .insert({ user_id: user.id, font_id: fontId });

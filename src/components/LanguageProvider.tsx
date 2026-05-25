@@ -11,10 +11,10 @@ interface LanguageContextType {
 }
 
 const LanguageContext = createContext<LanguageContextType>({
-  lang: "zh",
+  lang: "en",
   setLang: () => {},
   toggleLang: () => {},
-  label: "EN",
+  label: "中文",
 });
 
 export function useLanguage() {
@@ -22,7 +22,7 @@ export function useLanguage() {
 }
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
-  const [lang, setLangState] = useState<Lang>("zh");
+  const [lang, setLangState] = useState<Lang>("en");
 
   useEffect(() => {
     const saved = localStorage.getItem("lang") as Lang | null;

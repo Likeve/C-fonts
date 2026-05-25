@@ -9,11 +9,12 @@ CREATE TABLE IF NOT EXISTS user_downloads (
   UNIQUE(user_id, font_id)
 );
 
--- Track user plans (free / unlimited)
+-- Track user plans (free / unlimited) + per-user free download limit
 CREATE TABLE IF NOT EXISTS user_plans (
   id SERIAL PRIMARY KEY,
   user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE UNIQUE,
   plan TEXT NOT NULL DEFAULT 'free' CHECK (plan IN ('free', 'unlimited')),
+  free_download_limit INT NOT NULL DEFAULT 3,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
@@ -36,6 +37,9 @@ CREATE TRIGGER on_auth_user_created
 ALTER TABLE user_downloads ENABLE ROW LEVEL SECURITY;
 ALTER TABLE user_plans ENABLE ROW LEVEL SECURITY;
 
+-- Migration: add free_download_limit to existing user_plans table
+-- ALTER TABLE user_plans ADD COLUMN IF NOT EXISTS free_download_limit INT NOT NULL DEFAULT 3;
+
 -- user_downloads policies
 CREATE POLICY "Users can read own downloads"
   ON user_downloads FOR SELECT
@@ -49,6 +53,10 @@ CREATE POLICY "Users can insert own downloads"
 CREATE POLICY "Users can read own plan"
   ON user_plans FOR SELECT
   USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can insert own plan"
+  ON user_plans FOR INSERT
+  WITH CHECK (auth.uid() = user_id);
 
 CREATE POLICY "Users can update own plan"
   ON user_plans FOR UPDATE

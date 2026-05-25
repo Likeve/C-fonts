@@ -47,7 +47,7 @@ export async function GET(request: NextRequest) {
           );
       }
 
-      return NextResponse.json({ status: "paid" });
+      return NextResponse.json({ status: "paid", plan: session.metadata?.plan || "single" });
     }
 
     return NextResponse.json({ status: "unpaid" }, { status: 402 });

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useEffect, useRef, useCallback } from "react";
+import { useState, useMemo } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useLanguage } from "@/components/LanguageProvider";
@@ -13,25 +13,13 @@ interface HomeClientProps {
   categories: CategoryData[];
 }
 
-function getColumns(): number {
-  if (typeof window === "undefined") return 5;
-  const w = window.innerWidth;
-  if (w >= 1024) return 5;
-  if (w >= 768) return 4;
-  if (w >= 640) return 3;
-  return 2;
-}
-
-const ROWS_PER_BATCH = 3;
+const ITEMS_PER_PAGE = 30;
 
 export default function HomeClient({ fonts, categories }: HomeClientProps) {
   const { lang } = useLanguage();
   const [search, setSearch] = useState("");
   const [activeCategory, setActiveCategory] = useState<string>("all");
-  const [visibleCount, setVisibleCount] = useState(0);
-  const [columns, setColumns] = useState(5);
-  const sentinelRef = useRef<HTMLDivElement>(null);
-  const gridRef = useRef<HTMLDivElement>(null);
+  const [page, setPage] = useState(1);
 
   const filtered = useMemo(() => {
     let result = fonts;
@@ -52,48 +40,35 @@ export default function HomeClient({ fonts, categories }: HomeClientProps) {
     return result;
   }, [search, activeCategory, fonts]);
 
-  useEffect(() => {
-    setVisibleCount(0);
-  }, [search, activeCategory]);
+  const totalPages = Math.max(1, Math.ceil(filtered.length / ITEMS_PER_PAGE));
+  const currentPage = Math.min(page, totalPages);
+  const pageFonts = filtered.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
 
-  const batchSize = columns * ROWS_PER_BATCH;
+  const handleCategoryChange = (slug: string) => {
+    setActiveCategory(slug);
+    setPage(1);
+  };
 
-  useEffect(() => {
-    if (visibleCount === 0 && filtered.length > 0) {
-      setVisibleCount(batchSize);
+  const handleSearchChange = (value: string) => {
+    setSearch(value);
+    setPage(1);
+  };
+
+  const getPageNumbers = (): (number | "...")[] => {
+    const pages: (number | "...")[] = [];
+    if (totalPages <= 7) {
+      for (let i = 1; i <= totalPages; i++) pages.push(i);
+    } else {
+      pages.push(1);
+      if (currentPage > 3) pages.push("...");
+      const start = Math.max(2, currentPage - 1);
+      const end = Math.min(totalPages - 1, currentPage + 1);
+      for (let i = start; i <= end; i++) pages.push(i);
+      if (currentPage < totalPages - 2) pages.push("...");
+      pages.push(totalPages);
     }
-  }, [filtered.length, batchSize, visibleCount]);
-
-  useEffect(() => {
-    const updateColumns = () => setColumns(getColumns());
-    updateColumns();
-    window.addEventListener("resize", updateColumns);
-    return () => window.removeEventListener("resize", updateColumns);
-  }, []);
-
-  const loadMore = useCallback(() => {
-    setVisibleCount((prev) => Math.min(prev + batchSize, filtered.length));
-  }, [batchSize, filtered.length]);
-
-  useEffect(() => {
-    const sentinel = sentinelRef.current;
-    if (!sentinel) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting && visibleCount < filtered.length) {
-          loadMore();
-        }
-      },
-      { rootMargin: "200px" }
-    );
-
-    observer.observe(sentinel);
-    return () => observer.disconnect();
-  }, [visibleCount, filtered.length, loadMore]);
-
-  const visibleFonts = filtered.slice(0, visibleCount);
-  const hasMore = visibleCount < filtered.length;
+    return pages;
+  };
 
   return (
     <div className="mx-auto max-w-7xl px-4 sm:px-6 py-8">
@@ -106,7 +81,7 @@ export default function HomeClient({ fonts, categories }: HomeClientProps) {
             id="font-search"
             type="text"
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e) => handleSearchChange(e.target.value)}
             placeholder={t("searchPlaceholder", lang)}
             className="w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 pl-11 text-sm shadow-sm transition focus:border-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-200 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:focus:border-zinc-500 dark:focus:ring-zinc-700"
           />
@@ -132,7 +107,7 @@ export default function HomeClient({ fonts, categories }: HomeClientProps) {
 
         <nav aria-label={t("categories", lang)} className="flex flex-wrap gap-2">
           <button
-            onClick={() => setActiveCategory("all")}
+            onClick={() => handleCategoryChange("all")}
             className={`rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
               activeCategory === "all"
                 ? "bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900"
@@ -145,7 +120,7 @@ export default function HomeClient({ fonts, categories }: HomeClientProps) {
           {categories.map((cat) => (
             <button
               key={cat.slug}
-              onClick={() => setActiveCategory(cat.slug)}
+              onClick={() => handleCategoryChange(cat.slug)}
               className={`rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
                 activeCategory === cat.slug
                   ? "bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900"
@@ -166,11 +141,8 @@ export default function HomeClient({ fonts, categories }: HomeClientProps) {
       ) : (
         <section>
           <h2 className="sr-only">{lang === "zh" ? "字体列表" : "Font List"}</h2>
-          <div
-            ref={gridRef}
-            className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5"
-          >
-            {visibleFonts.map((font) => {
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+            {pageFonts.map((font) => {
               const cover = getAssetUrl(font.coverPath);
               return (
                 <Link
@@ -213,10 +185,49 @@ export default function HomeClient({ fonts, categories }: HomeClientProps) {
               );
             })}
           </div>
-          {hasMore && (
-            <div ref={sentinelRef} className="flex items-center justify-center py-8">
-              <div className="h-6 w-6 animate-spin rounded-full border-2 border-zinc-300 border-t-zinc-600 dark:border-zinc-700 dark:border-t-zinc-400" />
-            </div>
+
+          {totalPages > 1 && (
+            <nav aria-label="Pagination" className="mt-8 flex items-center justify-center gap-1">
+              <button
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
+                disabled={currentPage === 1}
+                className="rounded-lg px-3 py-2 text-sm font-medium text-zinc-600 transition-colors hover:bg-zinc-100 disabled:cursor-not-allowed disabled:opacity-30 dark:text-zinc-400 dark:hover:bg-zinc-800"
+              >
+                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+              </button>
+
+              {getPageNumbers().map((p, i) =>
+                p === "..." ? (
+                  <span key={`dots-${i}`} className="px-2 text-sm text-zinc-400 dark:text-zinc-500">
+                    ...
+                  </span>
+                ) : (
+                  <button
+                    key={p}
+                    onClick={() => setPage(p)}
+                    className={`rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
+                      p === currentPage
+                        ? "bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900"
+                        : "text-zinc-600 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800"
+                    }`}
+                  >
+                    {p}
+                  </button>
+                )
+              )}
+
+              <button
+                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                disabled={currentPage === totalPages}
+                className="rounded-lg px-3 py-2 text-sm font-medium text-zinc-600 transition-colors hover:bg-zinc-100 disabled:cursor-not-allowed disabled:opacity-30 dark:text-zinc-400 dark:hover:bg-zinc-800"
+              >
+                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+            </nav>
           )}
         </section>
       )}

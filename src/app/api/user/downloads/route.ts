@@ -38,9 +38,13 @@ export async function GET() {
     return NextResponse.json({ error: "not_authenticated" }, { status: 401 });
   }
 
-  const [{ data: downloads }, planData] = await Promise.all([
+  const [{ data: downloads }, { data: purchases }, planData] = await Promise.all([
     supabase
       .from("user_downloads")
+      .select("font_id")
+      .eq("user_id", user.id),
+    supabase
+      .from("user_purchases")
       .select("font_id")
       .eq("user_id", user.id),
     getPlanData(supabase, user.id),
@@ -51,11 +55,16 @@ export async function GET() {
   const freeDownloadsUsed = downloads?.length ?? 0;
   const remaining = hasUnlimited ? "unlimited" : Math.max(0, freeLimit - freeDownloadsUsed);
 
+  const downloadedFontIds = downloads?.map((d) => d.font_id) ?? [];
+  const purchasedFontIds = purchases?.map((p) => p.font_id) ?? [];
+
   return NextResponse.json({
     freeDownloadsUsed,
     freeLimit,
     hasUnlimited,
     remaining,
+    downloadedFontIds,
+    purchasedFontIds,
   });
 }
 
@@ -84,6 +93,23 @@ export async function POST(request: NextRequest) {
     .single();
 
   if (existing) {
+    const fontPath = `fonts/${fontId}.ttf`;
+    const downloadUrl = getAssetUrl(fontPath);
+    return NextResponse.json({
+      success: true,
+      downloadUrl,
+      reDownload: true,
+    });
+  }
+
+  const { data: purchased } = await supabase
+    .from("user_purchases")
+    .select("id")
+    .eq("user_id", user.id)
+    .eq("font_id", fontId)
+    .single();
+
+  if (purchased) {
     const fontPath = `fonts/${fontId}.ttf`;
     const downloadUrl = getAssetUrl(fontPath);
     return NextResponse.json({

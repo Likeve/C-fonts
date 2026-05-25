@@ -31,6 +31,8 @@ export default function FontDetailClient({ font }: FontDetailClientProps) {
     freeLimit: number;
     freeDownloadsUsed: number;
     hasUnlimited: boolean;
+    downloadedFontIds: string[];
+    purchasedFontIds: string[];
   } | null>(null);
   const [showPurchaseModal, setShowPurchaseModal] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
@@ -196,6 +198,11 @@ export default function FontDetailClient({ font }: FontDetailClientProps) {
   const cover = getAssetUrl(font.coverPath);
   const fontFamily = font.id.replace(/[^a-zA-Z0-9\u4e00-\u9fff]/g, "-");
 
+  const fontOwned =
+    downloadsInfo != null &&
+    (downloadsInfo.downloadedFontIds.includes(font.id) ||
+      downloadsInfo.purchasedFontIds.includes(font.id));
+
   const buttonLabel = !fontUrl
     ? t("previewNotAvailable", lang)
     : authLoading
@@ -206,17 +213,21 @@ export default function FontDetailClient({ font }: FontDetailClientProps) {
           : "Sign in to download free"
         : !downloadsInfo
           ? t("loading", lang)
-          : downloadsInfo.remaining === 0 && !downloadsInfo.hasUnlimited
+          : fontOwned
             ? lang === "zh"
-              ? "购买下载"
-              : "Buy & Download"
-            : downloadsInfo.hasUnlimited
+              ? "再次下载"
+              : "Download again"
+            : downloadsInfo.remaining === 0 && !downloadsInfo.hasUnlimited
               ? lang === "zh"
-                ? "下载字体"
-                : "Download Font"
-              : lang === "zh"
-                ? `下载字体 (${downloadsInfo.remaining}/${downloadsInfo.freeLimit})`
-                : `Download Font (${downloadsInfo.remaining}/${downloadsInfo.freeLimit})`;
+                ? "购买下载"
+                : "Buy & Download"
+              : downloadsInfo.hasUnlimited
+                ? lang === "zh"
+                  ? "下载字体"
+                  : "Download Font"
+                : lang === "zh"
+                  ? `下载字体 (${downloadsInfo.remaining}/${downloadsInfo.freeLimit})`
+                  : `Download Font (${downloadsInfo.remaining}/${downloadsInfo.freeLimit})`;
 
   return (
     <div className="mx-auto max-w-4xl px-4 sm:px-6 py-8">
@@ -387,6 +398,14 @@ export default function FontDetailClient({ font }: FontDetailClientProps) {
                 {user && downloadsInfo?.hasUnlimited && (
                   <p className="text-center text-xs text-green-600 dark:text-green-400">
                     {lang === "zh" ? "永久无限制会员" : "Unlimited Member"}
+                  </p>
+                )}
+
+                {user && fontOwned && !downloadsInfo?.hasUnlimited && (
+                  <p className="text-center text-xs text-blue-600 dark:text-blue-400">
+                    {lang === "zh"
+                      ? "你已拥有此字体，可随时免费下载"
+                      : "You own this font - free to download anytime"}
                   </p>
                 )}
 

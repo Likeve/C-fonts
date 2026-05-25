@@ -32,9 +32,9 @@ export async function GET(request: NextRequest) {
     const session = await getStripe().checkout.sessions.retrieve(sessionId);
 
     if (session.payment_status === "paid") {
-      // If unlimited plan, update user_plans in Supabase
+      const supabase = await createClient();
+
       if (session.metadata?.plan === "unlimited" && session.metadata?.userId) {
-        const supabase = await createClient();
         await supabase
           .from("user_plans")
           .upsert(
@@ -44,6 +44,22 @@ export async function GET(request: NextRequest) {
               updated_at: new Date().toISOString(),
             },
             { onConflict: "user_id" }
+          );
+      }
+
+      if (
+        session.metadata?.plan === "single" &&
+        session.metadata?.userId &&
+        session.metadata?.fontId
+      ) {
+        await supabase
+          .from("user_purchases")
+          .upsert(
+            {
+              user_id: session.metadata.userId,
+              font_id: session.metadata.fontId,
+            },
+            { onConflict: "user_id, font_id" }
           );
       }
 

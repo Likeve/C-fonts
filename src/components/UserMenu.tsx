@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { useState, useEffect, useCallback } from "react";
 import LoginModal from "./LoginModal";
+import DownloadHistoryModal from "./DownloadHistoryModal";
 import type { User } from "@supabase/supabase-js";
 
 interface DownloadsInfo {
@@ -21,6 +22,7 @@ export function UserMenu() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [showLoginModal, setShowLoginModal] = useState(false);
+  const [showHistoryModal, setShowHistoryModal] = useState(false);
   const [downloadsInfo, setDownloadsInfo] = useState<DownloadsInfo | null>(null);
 
   const fetchDownloadsInfo = useCallback(() => {
@@ -138,6 +140,20 @@ export function UserMenu() {
                 </div>
                 <div className="mx-4 my-1.5 border-t border-zinc-100 dark:border-zinc-700" />
                 <button
+                  onClick={() => setShowHistoryModal(true)}
+                  className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-zinc-600 transition-colors hover:bg-zinc-50 dark:text-zinc-400 dark:hover:bg-zinc-700"
+                >
+                  <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                    />
+                  </svg>
+                  {lang === "zh" ? "下载记录" : "Download History"}
+                </button>
+                <button
                   onClick={handleSignOut}
                   className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-zinc-600 transition-colors hover:bg-zinc-50 dark:text-zinc-400 dark:hover:bg-zinc-700"
                 >
@@ -167,6 +183,10 @@ export function UserMenu() {
       <LoginModal
         open={showLoginModal}
         onClose={() => setShowLoginModal(false)}
+      />
+      <DownloadHistoryModal
+        open={showHistoryModal}
+        onClose={() => setShowHistoryModal(false)}
       />
     </div>
   );

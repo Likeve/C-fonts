@@ -2,7 +2,7 @@ export type Lang = "zh" | "zh-Hant" | "en";
 
 export const dict = {
   siteTitle: { zh: "中文字体库", "zh-Hant": "中文字體庫", en: "Chinese Fonts" },
-  siteDesc: { zh: "精选中文字体，免费预览与下载", "zh-Hant": "精選中文字體，免費預覽與下載", en: "Curated Chinese fonts, preview & download" },
+  siteDesc: { zh: "精选中文字体，免费预览与下载", "zh-Hant": "精選中文字體，免費預覽與下載", en: "Download Curated High-Quality Chinese Fonts" },
   categories: { zh: "字体分类", "zh-Hant": "字體分類", en: "Categories" },
   allFonts: { zh: "全部字体", "zh-Hant": "全部字體", en: "All Fonts" },
   searchPlaceholder: { zh: "搜索字体名称...", "zh-Hant": "搜尋字體名稱...", en: "Search font name..." },

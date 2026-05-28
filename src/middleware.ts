@@ -26,13 +26,23 @@ export async function middleware(request: NextRequest) {
   );
 
   // 刷新过期的 session
-  await supabase.auth.getUser();
+  try {
+    await supabase.auth.getUser();
+  } catch {
+    // 忽略 Supabase 连接错误
+  }
+
+  const pathname = request.nextUrl.pathname;
+  const lang = pathname.startsWith("/en") ? "en"
+    : pathname.startsWith("/zh-Hant") ? "zh-Hant"
+    : "zh";
+  supabaseResponse.headers.set("x-lang", lang);
 
   return supabaseResponse;
 }
 
 export const config = {
   matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|font.svg|og-image.png|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+    "/((?!_next/static|_next/image|favicon.ico|font.svg|og|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
   ],
 };

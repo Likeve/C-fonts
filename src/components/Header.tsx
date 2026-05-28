@@ -15,9 +15,9 @@ export default function Header() {
         <Link href="/" className="flex items-center gap-2 shrink-0">
           <Image src="/font.svg" alt="Logo" width={32} height={32} className="h-8 w-8" />
           <div>
-            <h1 className="text-lg font-bold tracking-tight text-zinc-900">
+            <span className="text-lg font-bold tracking-tight text-zinc-900">
               {t("siteTitle", lang)}
-            </h1>
+            </span>
             <p className="text-xs text-zinc-500 hidden sm:block">
               {t("siteDesc", lang)}
             </p>

@@ -45,6 +45,8 @@ export default function FontDetailClient({ font }: FontDetailClientProps) {
     supabase.auth.getUser().then(({ data }) => {
       setUser(data.user ?? null);
       setAuthLoading(false);
+    }).catch(() => {
+      setAuthLoading(false);
     });
 
     const {
@@ -303,7 +305,7 @@ export default function FontDetailClient({ font }: FontDetailClientProps) {
             {cover ? (
               <Image
                 src={cover}
-                alt={displayName}
+                alt={`${displayName} Chinese font cover`}
                 fill
                 className="object-cover"
                 sizes="(max-width: 1024px) 100vw, 40vw"

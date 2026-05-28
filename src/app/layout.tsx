@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { headers } from "next/headers";
 import { Inter, JetBrains_Mono, Playfair_Display } from "next/font/google";
 import "./globals.css";
 
@@ -22,11 +23,11 @@ const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://www.cfont.site";
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "中文字体库 · Chinese Fonts · 400+ 免费中文字体/汉字在线预览与下载 · Hanzi · Han Characters",
-    template: "%s | 中文字体库 · Chinese Fonts",
+    default: "Download Free Chinese Fonts | 450+ High Quality Chinese Fonts · Hanzi · 中文字体下载",
+    template: "%s | Chinese Fonts · 中文字体库",
   },
   description:
-    "收录 400+ 款精选中文字体与汉字字体，涵盖简体、繁体、手写体、艺术体、黑体、宋体等风格，支持在线预览与免费下载。400+ curated Chinese fonts & Hanzi / Han characters. Free preview and download for simplified & traditional Chinese.",
+    "Download high quality Chinese fonts for free. Browse 450+ curated Chinese fonts & Hanzi characters — handwriting, calligraphy, modern, traditional & more. Online preview & TTF download. 高质量中文字体免费下载，在线预览。",
   keywords: [
     "中文字体",
     "汉字",
@@ -69,27 +70,27 @@ export const metadata: Metadata = {
   },
   openGraph: {
     type: "website",
-    siteName: "中文字体库 · Chinese Fonts",
-    title: "中文字体库 · Chinese Fonts · 400+ 免费汉字字体预览与下载 · Hanzi",
+    siteName: "Chinese Fonts",
+    title: "Download Free Chinese Fonts | 450+ High Quality Chinese Fonts · Hanzi · 中文字体下载",
     description:
-      "收录 400+ 款精选中文字体与汉字，涵盖简体繁体、手写艺术黑体宋体。400+ Chinese fonts & Han characters. Free preview & download.",
+      "Download high quality Chinese fonts for free. 450+ curated Chinese fonts & Hanzi characters. Online preview & TTF download. Handwriting, calligraphy, modern, traditional styles. 高质量中文字体免费下载。",
     url: SITE_URL,
     locale: "zh_CN",
     images: [
       {
-        url: "/og-image.png",
+        url: "/og",
         width: 1200,
         height: 630,
-        alt: "中文字体库 · Chinese Fonts · Hanzi",
+        alt: "Download Free Chinese Fonts · 中文字体下载",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "中文字体库 · Chinese Fonts · 400+ Hanzi",
+    title: "Download Free Chinese Fonts | 450+ High Quality Chinese Fonts",
     description:
-      "收录 400+ 款精选中文字体与汉字，涵盖简体繁体、手写艺术黑体宋体。400+ Chinese fonts & Han characters. Free preview & download.",
-    images: ["/og-image.png"],
+      "Download high quality Chinese fonts for free. 450+ curated Chinese fonts with online preview. Handwriting, calligraphy, modern, traditional & more.",
+    images: ["/og"],
   },
   icons: {
     icon: "/font.svg",
@@ -101,20 +102,22 @@ import { LanguageProvider } from "@/components/LanguageProvider";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const headersList = await headers();
+  const lang = headersList.get("x-lang") || "zh";
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "WebSite",
-    name: "中文字体库 · Chinese Fonts",
+    name: "Chinese Fonts · 中文字体库",
     url: SITE_URL,
     description:
-      "收录 400+ 款精选中文字体与汉字字体，涵盖简体、繁体、手写体、艺术体、黑体、宋体等风格，支持在线预览与免费下载。400+ Chinese fonts & Hanzi characters with online preview & free download.",
+      "Download high quality Chinese fonts for free. 450+ curated Chinese fonts & Hanzi characters — handwriting, calligraphy, modern, traditional styles. Online preview & TTF download. 高质量中文字体免费下载。",
     inLanguage: ["zh-CN", "zh-Hant", "en"],
-    keywords: "中文字体,汉字,繁体,Chinese fonts,Chinese characters,Hanzi,Han characters,字体下载,字体预览,400+中文字体",
+    keywords: "Chinese fonts, Chinese font download, Hanzi, free fonts, 中文字体, 字体下载",
     potentialAction: {
       "@type": "SearchAction",
       target: {
@@ -126,7 +129,7 @@ export default function RootLayout({
   };
 
   return (
-    <html lang="zh" suppressHydrationWarning className={`${inter.variable} ${jetbrainsMono.variable} ${playfair.variable} h-full antialiased`}>
+    <html lang={lang} suppressHydrationWarning className={`${inter.variable} ${jetbrainsMono.variable} ${playfair.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col bg-zinc-50 text-zinc-950">
         <script
           type="application/ld+json"

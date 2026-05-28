@@ -32,29 +32,27 @@ export async function generateMetadata({
   const fontCount = data.fonts.length;
 
   return {
-    title: `${font.name} - ${font.englishName}`,
-    description: `${font.name}（${font.englishName}）· ${font.categoryZh} 中文字体/汉字 · 中文字体库收录 ${fontCount}+ 款字体 · 免费在线预览与下载 · ${font.categoryEn} Chinese font / Hanzi / Han character. Free preview & download.`,
+    title: `Download ${font.name} - ${font.englishName} | Free ${font.categoryEn} Chinese Font`,
+    description: `Download high quality ${font.name}（${font.englishName}）Chinese font for free. A ${font.categoryEn.toLowerCase()} style Chinese font with online preview and TTF download. ${fontCount}+ curated Chinese fonts & Hanzi characters. ${font.categoryZh}高质量中文字体免费下载。`,
     keywords: [
-      font.name,
-      font.englishName,
-      font.categoryZh,
-      font.categoryEn,
-      "中文字体",
-      "汉字",
-      "Hanzi",
-      "Han characters",
-      "Chinese fonts",
-      "Chinese characters",
-      "字体下载",
-      "字体预览",
-      "免费字体",
+      `download ${font.name}`,
+      `${font.name} Chinese font`,
+      `free ${font.categoryEn.toLowerCase()} Chinese font`,
+      `${font.englishName} font download`,
+      "Chinese font free download",
+      "high quality Chinese font",
     ],
     alternates: {
       canonical: `${siteUrl}/fonts/${encodeURIComponent(font.id)}`,
+      languages: {
+        zh: `${siteUrl}/zh/fonts/${encodeURIComponent(font.id)}`,
+        "zh-Hant": `${siteUrl}/zh-Hant/fonts/${encodeURIComponent(font.id)}`,
+        en: `${siteUrl}/en/fonts/${encodeURIComponent(font.id)}`,
+      },
     },
     openGraph: {
-      title: `${font.name} - ${font.englishName} · 中文字体库 · Hanzi`,
-      description: `${font.name}（${font.englishName}）· ${font.categoryZh} · ${fontCount}+ 中文字体库免费预览与下载 · ${font.categoryEn} Chinese font / Hanzi character. Free preview & download.`,
+      title: `Download ${font.name} - ${font.englishName} · Free Chinese Font`,
+      description: `Download high quality ${font.name}（${font.englishName}）Chinese font for free. ${font.categoryEn} style with online preview. ${fontCount}+ curated Chinese fonts. 高质量中文字体免费下载。`,
       url: `${siteUrl}/fonts/${encodeURIComponent(font.id)}`,
       type: "article",
       images: font.coverPath
@@ -70,8 +68,8 @@ export async function generateMetadata({
     },
     twitter: {
       card: "summary_large_image",
-      title: `${font.name} - ${font.englishName} · Chinese Font · Hanzi`,
-      description: `${font.name}（${font.englishName}）· ${font.categoryZh} · 免费预览与下载 · ${font.categoryEn} Chinese font / Hanzi character.`,
+      title: `Download ${font.name} · Free Chinese Font`,
+      description: `Download high quality ${font.name} Chinese font for free. ${font.categoryEn} style. Online preview & TTF download. 高质量中文字体下载。`,
       images: font.coverPath
         ? [font.coverPath.startsWith("http") ? font.coverPath : `${siteUrl}/${font.coverPath}`]
         : [],
@@ -103,8 +101,8 @@ export default async function FontDetailPage({
     "@context": "https://schema.org",
     "@type": "CreativeWork",
     name: `${font.name} - ${font.englishName}`,
-    description: `${font.name}（${font.englishName}）· ${font.categoryZh} | 中文字体库收录 ${fontCount}+ 款中文字体/汉字。${font.categoryEn} Chinese font / Hanzi / Han character. Free preview & download.`,
-    keywords: `${font.name}, ${font.englishName}, ${font.categoryZh}, ${font.categoryEn}, Chinese font, Hanzi, Han character, 中文字体, 汉字`,
+    description: `Download high quality ${font.name}（${font.englishName}）Chinese font for free. A ${font.categoryEn} style Chinese font. Online preview & TTF download.`,
+    keywords: `download ${font.name}, ${font.englishName}, ${font.categoryEn} Chinese font, high quality Chinese font free download`,
     creator: {
       "@type": "Organization",
       name: font.vendor,
@@ -112,8 +110,51 @@ export default async function FontDetailPage({
     ...(coverUrl ? { thumbnailUrl: coverUrl } : {}),
     about: {
       "@type": "Thing",
-      name: "Chinese Fonts · Hanzi · Han Characters",
+      name: "High Quality Chinese Font · Free Chinese Font Download",
     },
+  };
+
+  const digitalDocumentLd = {
+    "@context": "https://schema.org",
+    "@type": "DigitalDocument",
+    name: `${font.name} - ${font.englishName}`,
+    description: `Download high quality ${font.name} Chinese font for free. ${font.categoryEn} style. TTF format.`,
+    author: {
+      "@type": "Organization",
+      name: font.vendor,
+    },
+    encodingFormat: "font/ttf",
+    about: {
+      "@type": "Thing",
+      name: `${font.categoryEn} Chinese Font · Hanzi`,
+    },
+    ...(coverUrl ? { thumbnailUrl: coverUrl } : {}),
+    creativeWorkStatus: "Published",
+    datePublished: "2024-01-01",
+  };
+
+  const breadcrumbLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Chinese Fonts",
+        item: siteUrl,
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: font.categoryEn,
+        item: `${siteUrl}/?category=${encodeURIComponent(font.category)}`,
+      },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: `${font.name} - ${font.englishName}`,
+      },
+    ],
   };
 
   return (
@@ -121,6 +162,14 @@ export default async function FontDetailPage({
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(digitalDocumentLd) }}
       />
       <FontDetailClient font={font} />
     </>

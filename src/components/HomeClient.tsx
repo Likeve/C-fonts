@@ -4,7 +4,7 @@ import { useState, useMemo } from"react";
 import Link from"next/link";
 import Image from"next/image";
 import { useLanguage } from"@/components/LanguageProvider";
-import { t, vendors } from"@/lib/i18n";
+import { t, vendors, categoryLabel } from"@/lib/i18n";
 import { getAssetUrl } from"@/lib/assets";
 import type { FontData, CategoryData } from"@/types/font";
 
@@ -102,7 +102,7 @@ export default function HomeClient({ fonts, categories }: HomeClientProps) {
         </div>
 
         <p className="mb-3 text-sm text-zinc-500">
-          {filtered.length} {lang ==="zh" ?"个结果" :"results"}
+          {filtered.length} {t("results", lang)}
         </p>
 
         <nav aria-label={t("categories", lang)} className="flex flex-wrap gap-2">
@@ -128,7 +128,7 @@ export default function HomeClient({ fonts, categories }: HomeClientProps) {
               }`}
               aria-current={activeCategory === cat.slug ?"page" : undefined}
             >
-              {lang ==="zh" ? cat.zh : cat.en} ({cat.count})
+              {categoryLabel(cat, lang)} ({cat.count})
             </button>
           ))}
         </nav>
@@ -136,11 +136,11 @@ export default function HomeClient({ fonts, categories }: HomeClientProps) {
 
       {filtered.length === 0 ? (
         <div className="py-24 text-center text-zinc-400">
-          <p className="text-lg">{lang ==="zh" ?"没有找到匹配的字体" :"No fonts found"}</p>
+          <p className="text-lg">{t("noFontsFound", lang)}</p>
         </div>
       ) : (
         <section>
-          <h2 className="sr-only">{lang ==="zh" ?"字体列表" :"Font List"}</h2>
+          <h2 className="sr-only">{t("fontList", lang)}</h2>
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
             {pageFonts.map((font) => {
               const cover = getAssetUrl(font.coverPath);
@@ -187,7 +187,7 @@ export default function HomeClient({ fonts, categories }: HomeClientProps) {
           </div>
 
           {totalPages > 1 && (
-            <nav aria-label="Pagination" className="mt-8 flex items-center justify-center gap-1">
+            <nav aria-label={t("pagination", lang)} className="mt-8 flex items-center justify-center gap-1">
               <button
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
                 disabled={currentPage === 1}

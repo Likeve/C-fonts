@@ -35,12 +35,10 @@ export default function LoginClient() {
     <div className="flex min-h-[60vh] items-center justify-center px-4">
       <div className="w-full max-w-sm text-center">
         <h1 className="text-2xl font-bold tracking-tight text-zinc-900 mb-2">
-          {lang ==="zh" ?"登录中文字体库" :"Sign in to Chinese Fonts"}
+          {t("signInTitle", lang)}
         </h1>
         <p className="text-sm text-zinc-500 mb-8">
-          {lang ==="zh"
-            ?"使用 Google 账号登录，新用户免费下载3款字体"
-            :"Sign in with Google, new users get 3 free downloads"}
+          {t("signInDesc", lang)}
         </p>
 
         <button
@@ -66,18 +64,12 @@ export default function LoginClient() {
               fill="#EA4335"
             />
           </svg>
-          {loading
-            ? lang ==="zh"
-              ?"正在跳转..."
-              :"Redirecting..."
-            : lang ==="zh"
-              ?"使用 Google 账号登录"
-              :"Sign in with Google"}
+          {loading ? t("redirecting", lang) : t("signInWithGoogle", lang)}
         </button>
 
         {error && (
           <p className="mt-4 text-sm text-red-600">
-            {lang ==="zh" ?"登录失败，请重试" :"Sign in failed, please try again"}
+            {t("signInFailed", lang)}
           </p>
         )}
       </div>

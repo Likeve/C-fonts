@@ -4,7 +4,7 @@ import { useState, useEffect, useRef, useCallback } from"react";
 import Link from"next/link";
 import Image from"next/image";
 import { useLanguage } from"@/components/LanguageProvider";
-import { t, vendors } from"@/lib/i18n";
+import { t, vendors, categoryLabel } from"@/lib/i18n";
 import { getAssetUrl } from"@/lib/assets";
 import { createClient } from"@/lib/supabase/client";
 import LoginModal from"./LoginModal";
@@ -210,26 +210,16 @@ export default function FontDetailClient({ font }: FontDetailClientProps) {
     : authLoading
       ? t("loading", lang)
       : !user
-        ? lang ==="zh"
-          ?"登录后免费下载"
-          :"Sign in to download free"
+        ? t("signInToDownload", lang)
         : !downloadsInfo
           ? t("loading", lang)
           : fontOwned
-            ? lang ==="zh"
-              ?"再次下载"
-              :"Download again"
+            ? t("downloadAgain", lang)
             : downloadsInfo.remaining === 0 && !downloadsInfo.hasUnlimited
-              ? lang ==="zh"
-                ?"购买下载"
-                :"Buy & Download"
+              ? t("buyAndDownload", lang)
               : downloadsInfo.hasUnlimited
-                ? lang ==="zh"
-                  ?"下载字体"
-                  :"Download Font"
-                : lang ==="zh"
-                  ? `下载字体 (${downloadsInfo.remaining}/${downloadsInfo.freeLimit})`
-                  : `Download Font (${downloadsInfo.remaining}/${downloadsInfo.freeLimit})`;
+                ? t("downloadFont", lang)
+                : `${t("downloadFont", lang)} (${downloadsInfo.remaining}/${downloadsInfo.freeLimit})`;
 
   return (
     <div className="mx-auto max-w-4xl px-4 sm:px-6 py-8">
@@ -280,7 +270,7 @@ export default function FontDetailClient({ font }: FontDetailClientProps) {
           {fontLoaded && (
             <div className="mt-6 space-y-2">
               <p className="text-xs text-zinc-400">
-                {lang ==="zh" ?"字体大小预览" :"Font size preview"}
+                {t("fontSizePreview", lang)}
               </p>
               <div className="space-y-3">
                 <p style={{ fontFamily: `"${fontFamily}"`, fontSize: 16 }} className="text-zinc-900">
@@ -332,7 +322,7 @@ export default function FontDetailClient({ font }: FontDetailClientProps) {
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
                 <span className="text-zinc-500">{t("category", lang)}</span>
-                <span>{lang ==="zh" ? font.categoryZh : font.categoryEn}</span>
+                <span>{categoryLabel({ zh: font.categoryZh, en: font.categoryEn }, lang)}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-zinc-500">{t("vendor", lang)}</span>
@@ -362,7 +352,7 @@ export default function FontDetailClient({ font }: FontDetailClientProps) {
                   {checkingOut ? (
                     <>
                       <div className="h-4 w-4 animate-spin rounded-full border-2 border-zinc-300 border-t-zinc-600" />
-                      {lang ==="zh" ?"处理中..." :"Processing..."}
+                      {t("processing", lang)}
                     </>
                   ) : (
                     <>
@@ -383,14 +373,14 @@ export default function FontDetailClient({ font }: FontDetailClientProps) {
                     {checkingUnlimited ? (
                       <>
                         <div className="h-4 w-4 animate-spin rounded-full border-2 border-black/20 border-t-black" />
-                        {lang ==="zh" ?"处理中..." :"Processing..."}
+                        {t("processing", lang)}
                       </>
                     ) : (
                       <>
                         <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                         </svg>
-                        {lang ==="zh" ?"无限制下载" :"Unlimited Downloads"}
+                        {t("unlimitedDownloads", lang)}
                         <span className="ml-1 opacity-60">$7.99</span>
                       </>
                     )}
@@ -399,23 +389,19 @@ export default function FontDetailClient({ font }: FontDetailClientProps) {
 
                 {user && downloadsInfo?.hasUnlimited && (
                   <p className="text-center text-xs text-green-600">
-                    {lang ==="zh" ?"永久无限制会员" :"Unlimited Member"}
+                    {t("unlimitedMember", lang)}
                   </p>
                 )}
 
                 {user && fontOwned && !downloadsInfo?.hasUnlimited && (
                   <p className="text-center text-xs text-blue-600">
-                    {lang ==="zh"
-                      ?"你已拥有此字体，可随时免费下载"
-                      :"You own this font - free to download anytime"}
+                    {t("ownedFont", lang)}
                   </p>
                 )}
 
                 {!user && !authLoading && (
                   <p className="text-center text-xs text-zinc-400">
-                    {lang ==="zh"
-                      ?"登录后可免费下载3款字体"
-                      :"Sign in for 3 free downloads"}
+                    {t("signInForFreeDownloads", lang)}
                   </p>
                 )}
               </>

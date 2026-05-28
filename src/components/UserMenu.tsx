@@ -1,6 +1,7 @@
 "use client";
 
 import { useLanguage } from"./LanguageProvider";
+import { t } from"@/lib/i18n";
 import { createClient } from"@/lib/supabase/client";
 import { useRouter } from"next/navigation";
 import Image from"next/image";
@@ -131,9 +132,7 @@ export function UserMenu() {
                       }`}
                     >
                       {downloadsInfo.hasUnlimited
-                        ? lang ==="zh"
-                          ?"Unlimited 会员"
-                          :"Unlimited"
+                        ? t("unlimitedBadge", lang)
                         : `Limited ${statusLabel}`}
                     </p>
                   )}
@@ -151,7 +150,7 @@ export function UserMenu() {
                       d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
                     />
                   </svg>
-                  {lang ==="zh" ?"下载记录" :"Download History"}
+                  {t("downloadHistory", lang)}
                 </button>
                 <button
                   onClick={handleSignOut}
@@ -165,7 +164,7 @@ export function UserMenu() {
                       d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
                     />
                   </svg>
-                  {lang ==="zh" ?"退出登录" :"Sign out"}
+                  {t("signOut", lang)}
                 </button>
               </div>
             </div>
@@ -174,7 +173,7 @@ export function UserMenu() {
               onClick={() => setShowLoginModal(true)}
               className="rounded-lg bg-white px-3 py-1.5 text-sm font-medium text-zinc-900 shadow-sm transition-colors hover:bg-zinc-50"
             >
-              {lang ==="zh" ?"登录" :"Sign in"}
+              {t("signIn", lang)}
             </button>
           )}
         </>

@@ -5,6 +5,7 @@ import { createPortal } from"react-dom";
 import Link from"next/link";
 import Image from"next/image";
 import { useLanguage } from"@/components/LanguageProvider";
+import { t, dateLang } from"@/lib/i18n";
 import { getAssetUrl } from"@/lib/assets";
 
 interface HistoryItem {
@@ -43,7 +44,7 @@ export default function DownloadHistoryModal({ open, onClose }: DownloadHistoryM
 
   const formatDate = (iso: string) => {
     const d = new Date(iso);
-    return d.toLocaleDateString(lang ==="zh" ?"zh-CN" :"en-US", {
+    return d.toLocaleDateString(dateLang(lang), {
       year:"numeric",
       month:"short",
       day:"numeric",
@@ -55,7 +56,7 @@ export default function DownloadHistoryModal({ open, onClose }: DownloadHistoryM
       <div className="w-full max-w-lg max-h-[80vh] flex flex-col rounded-2xl bg-white shadow-xl">
         <div className="flex items-center justify-between border-b border-zinc-200 p-5">
           <h2 className="text-lg font-bold text-zinc-900">
-            {lang ==="zh" ?"下载记录" :"Download History"}
+            {t("downloadHistory", lang)}
           </h2>
           <button
             onClick={onClose}
@@ -78,7 +79,7 @@ export default function DownloadHistoryModal({ open, onClose }: DownloadHistoryM
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
               <p className="mt-4 text-sm text-zinc-500">
-                {lang ==="zh" ?"暂无下载记录" :"No downloads yet"}
+                {t("noDownloadsYet", lang)}
               </p>
             </div>
           ) : (
@@ -121,7 +122,7 @@ export default function DownloadHistoryModal({ open, onClose }: DownloadHistoryM
                           </span>
                           {item.source ==="purchased" && (
                             <span className="rounded-full bg-amber-100 px-1.5 py-0.5 text-[10px] font-medium text-amber-700">
-                              {lang ==="zh" ?"已购" :"Paid"}
+                              {t("paid", lang)}
                             </span>
                           )}
                         </div>

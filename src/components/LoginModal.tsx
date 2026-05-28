@@ -3,6 +3,7 @@
 import { useState } from"react";
 import { createPortal } from"react-dom";
 import { useLanguage } from"@/components/LanguageProvider";
+import { t } from"@/lib/i18n";
 import { createClient } from"@/lib/supabase/client";
 
 interface LoginModalProps {
@@ -42,12 +43,10 @@ export default function LoginModal({ open, onClose, redirect }: LoginModalProps)
       <div className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-xl">
         <div className="mb-6 text-center">
           <h2 className="text-xl font-bold text-zinc-900">
-            {lang ==="zh" ?"登录中文字体库" :"Sign in to Chinese Fonts"}
+            {t("signInTitle", lang)}
           </h2>
           <p className="mt-2 text-sm text-zinc-500">
-            {lang ==="zh"
-              ?"使用 Google 账号登录，新用户免费下载3款字体"
-              :"Sign in with Google, new users get 3 free downloads"}
+            {t("signInDesc", lang)}
           </p>
         </div>
 
@@ -74,18 +73,12 @@ export default function LoginModal({ open, onClose, redirect }: LoginModalProps)
               fill="#EA4335"
             />
           </svg>
-          {loading
-            ? lang ==="zh"
-              ?"正在跳转..."
-              :"Redirecting..."
-            : lang ==="zh"
-              ?"使用 Google 账号登录"
-              :"Sign in with Google"}
+          {loading ? t("redirecting", lang) : t("signInWithGoogle", lang)}
         </button>
 
         {error && (
           <p className="mt-4 text-center text-sm text-red-600">
-            {lang ==="zh" ?"登录失败，请重试" :"Sign in failed, please try again"}
+            {t("signInFailed", lang)}
           </p>
         )}
 
@@ -93,7 +86,7 @@ export default function LoginModal({ open, onClose, redirect }: LoginModalProps)
           onClick={onClose}
           className="mt-4 w-full rounded-xl py-2.5 text-sm font-medium text-zinc-500 transition-colors hover:text-zinc-700"
         >
-          {lang ==="zh" ?"暂不考虑" :"Maybe later"}
+          {t("maybeLater", lang)}
         </button>
       </div>
     </div>,

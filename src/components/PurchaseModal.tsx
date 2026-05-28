@@ -2,6 +2,7 @@
 
 import { createPortal } from"react-dom";
 import { useLanguage } from"@/components/LanguageProvider";
+import { t } from"@/lib/i18n";
 
 interface PurchaseModalProps {
   open: boolean;
@@ -36,12 +37,10 @@ export default function PurchaseModal({ open, fontId, fontName, onClose }: Purch
       <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl">
         <div className="mb-6 text-center">
           <h2 className="text-xl font-bold text-zinc-900">
-            {lang ==="zh" ?"免费次数已用完" :"Free downloads used up"}
+            {t("freeUsedUp", lang)}
           </h2>
           <p className="mt-2 text-sm text-zinc-500">
-            {lang ==="zh"
-              ?"购买以下任一方案继续下载字体"
-              :"Choose a plan to continue downloading fonts"}
+            {t("choosePlan", lang)}
           </p>
         </div>
 
@@ -52,10 +51,10 @@ export default function PurchaseModal({ open, fontId, fontName, onClose }: Purch
           >
             <div>
               <p className="font-semibold text-zinc-900">
-                {lang ==="zh" ?"下载当前字体" :"Single Font"}
+                {t("singleFont", lang)}
               </p>
               <p className="text-xs text-zinc-500">
-                {lang ==="zh" ? `仅购买「${fontName}」` : `Only"${fontName}"`}
+                {t("onlyFont", lang)}{lang === "en" ? ` "${fontName}"` : `「${fontName}」`}
               </p>
             </div>
             <span className="text-lg font-bold text-zinc-900">$1.99</span>
@@ -67,12 +66,10 @@ export default function PurchaseModal({ open, fontId, fontName, onClose }: Purch
           >
             <div>
               <p className="font-semibold text-black">
-                {lang ==="zh" ?"全网永久无限制" :"Unlimited Forever"}
+                {t("unlimitedForever", lang)}
               </p>
               <p className="text-xs text-black/60">
-                {lang ==="zh"
-                  ?"所有字体任意下载，永久有效"
-                  :"Download any font, forever"}
+                {t("unlimitedDesc", lang)}
               </p>
             </div>
             <span className="text-lg font-bold text-black">$7.99</span>
@@ -83,7 +80,7 @@ export default function PurchaseModal({ open, fontId, fontName, onClose }: Purch
           onClick={onClose}
           className="mt-4 w-full rounded-xl py-2.5 text-sm font-medium text-zinc-500 transition-colors hover:text-zinc-700"
         >
-          {lang ==="zh" ?"暂不考虑" :"Maybe later"}
+          {t("maybeLater", lang)}
         </button>
       </div>
     </div>,

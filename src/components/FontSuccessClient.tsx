@@ -4,6 +4,7 @@ import { useParams, useSearchParams } from"next/navigation";
 import { useState, useEffect, useCallback } from"react";
 import Link from"next/link";
 import { useLanguage } from"@/components/LanguageProvider";
+import { t } from"@/lib/i18n";
 import { getAssetUrl } from"@/lib/assets";
 import fontsData from"@/data/fonts.json";
 import type { FontsJson } from"@/types/font";
@@ -51,13 +52,13 @@ export default function FontSuccessClient() {
     return (
       <div className="mx-auto max-w-4xl px-4 py-24 text-center">
         <h2 className="text-2xl font-bold text-zinc-900">
-          {lang ==="zh" ?"字体未找到" :"Font Not Found"}
+          {t("fontNotFound", lang)}
         </h2>
         <Link
           href="/"
           className="mt-4 text-sm text-zinc-500 hover:text-zinc-800"
         >
-          {lang ==="zh" ?"返回首页" :"Back to Home"}
+          {t("backToHome", lang)}
         </Link>
       </div>
     );
@@ -76,18 +77,16 @@ export default function FontSuccessClient() {
       {status ==="error" && (
         <>
           <h2 className="text-2xl font-bold text-zinc-900">
-            {lang ==="zh" ?"支付验证失败" :"Payment Verification Failed"}
+            {t("paymentFailed", lang)}
           </h2>
           <p className="mt-3 text-zinc-500">
-            {lang ==="zh"
-              ?"无法验证您的支付。如果您已完成支付，请联系客服。"
-              :"Unable to verify your payment. If you completed payment, please contact support."}
+            {t("paymentFailedDesc", lang)}
           </p>
           <Link
             href={`/fonts/${encodeURIComponent(font.id)}`}
             className="mt-6 inline-flex items-center gap-2 rounded-xl bg-zinc-900 px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-zinc-800"
           >
-            {lang ==="zh" ?"返回字体详情" :"Back to Font"}
+            {t("backToFont", lang)}
           </Link>
         </>
       )}
@@ -100,12 +99,14 @@ export default function FontSuccessClient() {
             </svg>
           </div>
           <h2 className="text-2xl font-bold text-zinc-900">
-            {lang ==="zh" ?"支付成功" :"Payment Successful"}
+            {t("paymentSuccessful", lang)}
           </h2>
           <p className="mt-3 text-zinc-500">
-            {lang ==="zh"
-              ? `感谢购买 ${displayName}！点击下方按钮下载字体文件。`
-              : `Thank you for purchasing ${displayName}! Click below to download.`}
+            {lang ==="en"
+              ? `Thank you for purchasing ${displayName}! Click below to download.`
+              : lang ==="zh-Hant"
+                ? `感謝購買 ${displayName}！點擊下方按鈕下載字體檔案。`
+                : `感谢购买 ${displayName}！点击下方按钮下载字体文件。`}
           </p>
           <div className="mt-8 space-y-3">
             {fontUrl && (
@@ -117,7 +118,7 @@ export default function FontSuccessClient() {
                 <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
-                {lang ==="zh" ? `下载 ${font.name}.ttf` : `Download ${font.name}.ttf`}
+                {lang ==="en" ? `Download ${font.name}.ttf` : `${t("downloadTtf", lang)} ${font.name}.ttf`}
               </a>
             )}
             <Link
@@ -127,7 +128,7 @@ export default function FontSuccessClient() {
               <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
               </svg>
-              {lang ==="zh" ?"返回字体详情" :"Back to Font"}
+              {t("backToFont", lang)}
             </Link>
           </div>
         </>

@@ -99,6 +99,7 @@ export const metadata: Metadata = {
 };
 
 import { LanguageProvider } from "@/components/LanguageProvider";
+import GoogleAnalytics from "@/components/GoogleAnalytics";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
@@ -140,6 +141,7 @@ export default async function RootLayout({
           <main className="flex-1">{children}</main>
           <Footer />
         </LanguageProvider>
+        <GoogleAnalytics />
       </body>
     </html>
   );

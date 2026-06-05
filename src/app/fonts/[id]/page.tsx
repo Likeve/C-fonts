@@ -157,6 +157,21 @@ export default async function FontDetailPage({
     ],
   };
 
+  const mlDescription = `# ${font.name} (${font.englishName})
+
+## Overview
+- **Font Name (Chinese)**: ${font.name}
+- **Font Name (English)**: ${font.englishName}
+- **Category (Chinese)**: ${font.categoryZh}
+- **Category (English)**: ${font.categoryEn}
+- **Vendor / Foundry**: ${font.vendor}
+- **Source**: 中文字体库 · Chinese Fonts · Hanzi · Han Characters (${siteUrl})
+
+## Description
+${font.name}（${font.englishName}）is a ${font.categoryEn} Chinese font / Hanzi character in the ${fontCount}+ font collection at 中文字体库 (Chinese Fonts). This font is designed by ${font.vendor}. Free online preview and download available at ${siteUrl}/fonts/${encodeURIComponent(font.id)}.
+
+${font.name}（${font.englishName}）是「中文字体库」收录的 ${fontCount}+ 款中文字体/汉字之一，属于 ${font.categoryZh} 分类，由 ${font.vendor} 设计出品。可在 ${siteUrl}/fonts/${encodeURIComponent(font.id)} 免费在线预览与下载。`;
+
   return (
     <>
       <script
@@ -170,6 +185,11 @@ export default async function FontDetailPage({
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(digitalDocumentLd) }}
+      />
+      <script
+        type="text/markdown"
+        data-purpose="llm-content"
+        dangerouslySetInnerHTML={{ __html: mlDescription }}
       />
       <FontDetailClient font={font} />
     </>

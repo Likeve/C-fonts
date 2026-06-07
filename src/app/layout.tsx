@@ -91,11 +91,7 @@ export const metadata: Metadata = {
     description:
       "Download high quality Chinese fonts for free. 450+ curated Chinese fonts with online preview. Handwriting, calligraphy, modern, traditional & more.",
     images: ["/og"],
-  },
-  icons: {
-    icon: "/font.svg",
-    apple: "/font.svg",
-  },
+    },
 };
 
 import { LanguageProvider } from "@/components/LanguageProvider";

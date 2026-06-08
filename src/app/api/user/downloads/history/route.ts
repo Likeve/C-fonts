@@ -31,6 +31,9 @@ export async function GET() {
   const fontMap = new Map<string, FontData>();
   for (const f of data.fonts) {
     fontMap.set(f.id, f);
+    if (f.originalId) {
+      fontMap.set(f.originalId, f);
+    }
   }
 
   const seen = new Set<string>();

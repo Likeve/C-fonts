@@ -129,7 +129,7 @@ export default function FontDetailClient({ font }: FontDetailClientProps) {
       const blobUrl = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = blobUrl;
-      a.download = `${font.name}.ttf`;
+      a.download = `${font.englishName}.ttf`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
@@ -347,7 +347,7 @@ export default function FontDetailClient({ font }: FontDetailClientProps) {
               <div className="flex justify-between">
                 <span className="text-zinc-500">{t("fontFile", lang)}</span>
                 <span className="truncate max-w-[180px] text-right">
-                  {font.name}.ttf
+                  {font.englishName}.ttf
                 </span>
               </div>
             </div>

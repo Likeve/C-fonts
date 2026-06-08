@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import fontsData from "@/data/fonts.json";
 import type { FontsJson } from "@/types/font";
 import FontDetailClient from "@/components/FontDetailClient";
@@ -84,9 +84,14 @@ export default async function FontDetailPage({
 }) {
   const { id } = await params;
   const decodedId = decodeURIComponent(id);
-  const font = data.fonts.find((f) => f.id === decodedId);
+  let font = data.fonts.find((f) => f.id === decodedId);
 
+  // Redirect old Chinese IDs to new English slugs
   if (!font) {
+    const byOldId = data.fonts.find((f) => f.originalId === decodedId);
+    if (byOldId) {
+      redirect(`/fonts/${byOldId.id}`);
+    }
     notFound();
   }
 

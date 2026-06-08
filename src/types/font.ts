@@ -9,6 +9,7 @@ export interface FontData {
   fontPath: string;
   coverPath: string | null;
   tag: null | "no_cover";
+  originalId?: string;
 }
 
 export interface CategoryData {

@@ -2,7 +2,7 @@
 name = "cfont-site"
 compatibility_date = "2024-06-08"
 
-account_id = "142c22318d084bc4a2f24b06ca44868b"
+account_id = "91240f4cb86eb18d58e124f1430b9225"
 
 r2_buckets = [
   { binding = "FONTS", bucket_name = "chinese-fonts" }

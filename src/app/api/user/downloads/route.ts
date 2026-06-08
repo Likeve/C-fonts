@@ -1,6 +1,23 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { getAssetUrl } from "@/lib/assets";
+import fontsData from "@/data/fonts.json";
+import type { FontsJson } from "@/types/font";
+
+const fonts = (fontsData as FontsJson).fonts;
+
+function findFontPath(fontId: string): string | null {
+  const font = fonts.find(
+    (f) => f.id === fontId || f.originalId === fontId
+  );
+  return font?.fontPath ?? null;
+}
+
+function getFontDownloadUrl(fontId: string): string | null {
+  const fontPath = findFontPath(fontId);
+  if (!fontPath) return null;
+  return getAssetUrl(fontPath);
+}
 
 const DEFAULT_FREE_LIMIT = 3;
 
@@ -55,8 +72,28 @@ export async function GET() {
   const freeDownloadsUsed = downloads?.length ?? 0;
   const remaining = hasUnlimited ? "unlimited" : Math.max(0, freeLimit - freeDownloadsUsed);
 
-  const downloadedFontIds = downloads?.map((d) => d.font_id) ?? [];
-  const purchasedFontIds = purchases?.map((p) => p.font_id) ?? [];
+  const downloadedFontIdsRaw = downloads?.map((d) => d.font_id) ?? [];
+  const purchasedFontIdsRaw = purchases?.map((p) => p.font_id) ?? [];
+
+  // Expand IDs: include both old (Chinese) and new (English slug) IDs for backward compat
+  const idMap = new Map<string, Set<string>>();
+  for (const f of fonts) {
+    if (!idMap.has(f.id)) idMap.set(f.id, new Set());
+    idMap.get(f.id)!.add(f.id);
+    if (f.originalId) {
+      idMap.get(f.id)!.add(f.originalId);
+      if (!idMap.has(f.originalId)) idMap.set(f.originalId, new Set());
+      idMap.get(f.originalId)!.add(f.id);
+      idMap.get(f.originalId)!.add(f.originalId);
+    }
+  }
+
+  const downloadedFontIds = [...new Set(
+    downloadedFontIdsRaw.flatMap((rawId) => [...(idMap.get(rawId) ?? [rawId])])
+  )];
+  const purchasedFontIds = [...new Set(
+    purchasedFontIdsRaw.flatMap((rawId) => [...(idMap.get(rawId) ?? [rawId])])
+  )];
 
   return NextResponse.json({
     freeDownloadsUsed,
@@ -93,8 +130,7 @@ export async function POST(request: NextRequest) {
     .single();
 
   if (existing) {
-    const fontPath = `fonts/${fontId}.ttf`;
-    const downloadUrl = getAssetUrl(fontPath);
+    const downloadUrl = getFontDownloadUrl(fontId);
     return NextResponse.json({
       success: true,
       downloadUrl,
@@ -110,8 +146,7 @@ export async function POST(request: NextRequest) {
     .single();
 
   if (purchased) {
-    const fontPath = `fonts/${fontId}.ttf`;
-    const downloadUrl = getAssetUrl(fontPath);
+    const downloadUrl = getFontDownloadUrl(fontId);
     return NextResponse.json({
       success: true,
       downloadUrl,

@@ -3,7 +3,7 @@ set -e
 
 BUCKET="chinese-fonts"
 FONTS_DIR=$(cd "$(dirname "$0")/../public/fonts" && pwd -P)
-ACCOUNT_ID="${CLOUDFLARE_ACCOUNT_ID:-142c22318d084bc4a2f24b06ca44868b}"
+ACCOUNT_ID="${CLOUDFLARE_ACCOUNT_ID:-91240f4cb86eb18d58e124f1430b9225}"
 
 count=0
 total=$(ls "$FONTS_DIR" | wc -l | tr -d ' ')

@@ -1,0 +1,9 @@
+# R2 bucket: chinese-fonts
+name = "cfont-site"
+compatibility_date = "2024-06-08"
+
+account_id = "142c22318d084bc4a2f24b06ca44868b"
+
+r2_buckets = [
+  { binding = "FONTS", bucket_name = "chinese-fonts" }
+]

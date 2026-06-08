@@ -8,7 +8,7 @@
       "categoryZh": "创意设计",
       "categoryEn": "Creative",
       "vendor": "WDXL",
-      "fontPath": "fonts/WDXL 滑油字 SC.ttf",
+      "fontPath": "fonts/WD-XL 滑油字 SC Regular.ttf",
       "coverPath": "unified_covers/创意/WDXL 滑油字 SC.png",
       "tag": null
     },
@@ -404,7 +404,7 @@
       "categoryZh": "萌趣乐园",
       "categoryEn": "Playful",
       "vendor": "Yixin",
-      "fontPath": "fonts/壹心开心体.ttf",
+      "fontPath": "fonts/yixinkaixinti.ttf",
       "coverPath": "legacy_covers/壹心开心体.png",
       "tag": null
     },
@@ -428,7 +428,7 @@
       "categoryZh": "萌趣乐园",
       "categoryEn": "Playful",
       "vendor": "Yixin",
-      "fontPath": "fonts/壹心快乐体.ttf",
+      "fontPath": "fonts/yixinkuaileti.ttf",
       "coverPath": "legacy_covers/壹心快乐体.jpg",
       "tag": null
     },
@@ -452,7 +452,7 @@
       "categoryZh": "霸气标题",
       "categoryEn": "Bold Title",
       "vendor": "Yixin",
-      "fontPath": "fonts/壹心战甲黑.ttf",
+      "fontPath": "fonts/yixinzhanjiahei.ttf",
       "coverPath": "legacy_covers/壹心战甲黑.jpg",
       "tag": null
     },
@@ -3476,7 +3476,7 @@
       "categoryZh": "简约清新",
       "categoryEn": "Minimalist",
       "vendor": "Zihun",
-      "fontPath": "fonts/字魂清雅宋.ttf",
+      "fontPath": "fonts/zihunqingyasong.ttf",
       "coverPath": "unified_covers/简约/字魂清雅宋.png",
       "tag": null
     },
@@ -4688,7 +4688,7 @@
       "categoryZh": "古典雅韵",
       "categoryEn": "Classic",
       "vendor": "Erya",
-      "fontPath": "fonts/尔雅盛唐真书.ttf",
+      "fontPath": "fonts/eryashengtangzhenshu.ttf",
       "coverPath": "legacy_covers/尔雅盛唐真书.jpg",
       "tag": null
     },

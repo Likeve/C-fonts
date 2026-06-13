@@ -1,12 +1,16 @@
 "use client";
 
-import { useState, useMemo } from"react";
+import { useState, useMemo, useEffect } from"react";
 import Link from"next/link";
 import Image from"next/image";
 import { useLanguage } from"@/components/LanguageProvider";
 import { t, vendors } from"@/lib/i18n";
 import { getAssetUrl } from"@/lib/assets";
+import { createClient } from"@/lib/supabase/client";
+import LoginModal from"./LoginModal";
+import PurchaseModal from"./PurchaseModal";
 import type { FontData, CategoryData } from"@/types/font";
+import type { User } from"@supabase/supabase-js";
 
 interface HomeClientProps {
   fonts: FontData[];
@@ -20,6 +24,12 @@ export default function HomeClient({ fonts, categories }: HomeClientProps) {
   const [search, setSearch] = useState("");
   const [activeCategory, setActiveCategory] = useState<string>("all");
   const [page, setPage] = useState(1);
+  const [user, setUser] = useState<User | null>(null);
+  const [showLoginModal, setShowLoginModal] = useState(false);
+  const [showPurchaseModal, setShowPurchaseModal] = useState(false);
+  const [purchaseFontId, setPurchaseFontId] = useState("");
+  const [purchaseFontName, setPurchaseFontName] = useState("");
+  const [downloadingFontId, setDownloadingFontId] = useState<string | null>(null);
 
   const filtered = useMemo(() => {
     let result = fonts;
@@ -52,6 +62,70 @@ export default function HomeClient({ fonts, categories }: HomeClientProps) {
   const handleSearchChange = (value: string) => {
     setSearch(value);
     setPage(1);
+  };
+
+  useEffect(() => {
+    const supabase = createClient();
+    supabase.auth.getUser().then(({ data }) => {
+      setUser(data.user ?? null);
+    }).catch(() => {});
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const triggerDownload = async (url: string, englishName: string) => {
+    try {
+      const res = await fetch(url);
+      const blob = await res.blob();
+      const blobUrl = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = blobUrl;
+      a.download = `${englishName}.ttf`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(blobUrl);
+    } catch {
+      window.open(url, "_blank");
+    }
+  };
+
+  const handleFontDownload = async (font: FontData) => {
+    if (!user) {
+      setShowLoginModal(true);
+      return;
+    }
+
+    setDownloadingFontId(font.id);
+    try {
+      const res = await fetch("/api/user/downloads", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ fontId: font.id }),
+      });
+
+      if (res.status === 402) {
+        setPurchaseFontId(font.id);
+        setPurchaseFontName(font.name);
+        setShowPurchaseModal(true);
+        setDownloadingFontId(null);
+        return;
+      }
+
+      const data = await res.json();
+      if (data.success && data.downloadUrl) {
+        await triggerDownload(data.downloadUrl, font.englishName);
+      }
+    } catch {
+      // ignore
+    }
+    setDownloadingFontId(null);
   };
 
   const getPageNumbers = (): (number |"...")[] => {
@@ -172,6 +246,26 @@ export default function HomeClient({ fonts, categories }: HomeClientProps) {
                         </span>
                       </div>
                     )}
+                    {font.fontPath && (
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          handleFontDownload(font);
+                        }}
+                        disabled={downloadingFontId === font.id}
+                        className="absolute right-3 bottom-3 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-white/90 shadow-md backdrop-blur-sm opacity-0 transition-all duration-200 group-hover:opacity-100 hover:bg-white hover:shadow-lg disabled:opacity-60"
+                        aria-label={lang ==="zh" ? "下载字体" : "Download font"}
+                      >
+                        {downloadingFontId === font.id ? (
+                          <div className="h-4 w-4 animate-spin rounded-full border-2 border-zinc-300 border-t-zinc-600" />
+                        ) : (
+                          <svg className="h-4 w-4 text-zinc-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                          </svg>
+                        )}
+                      </button>
+                    )}
                   </div>
                   <div className="flex flex-col gap-0.5 p-4">
                     <h3 className="truncate text-sm font-medium text-zinc-800">
@@ -231,6 +325,17 @@ export default function HomeClient({ fonts, categories }: HomeClientProps) {
           )}
         </section>
       )}
+
+      <LoginModal
+        open={showLoginModal}
+        onClose={() => setShowLoginModal(false)}
+      />
+      <PurchaseModal
+        open={showPurchaseModal}
+        fontId={purchaseFontId}
+        fontName={purchaseFontName}
+        onClose={() => setShowPurchaseModal(false)}
+      />
     </div>
   );
 }

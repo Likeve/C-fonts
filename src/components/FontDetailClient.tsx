@@ -414,8 +414,8 @@ export default function FontDetailClient({ font }: FontDetailClientProps) {
                 {!user && !authLoading && (
                   <p className="text-center text-xs text-zinc-400">
                     {lang ==="zh"
-                      ?"登录后可免费下载3款字体"
-                      :"Sign in for 3 free downloads"}
+                      ?"登录后可免费下载1款字体"
+                      :"Sign in for 1 free download"}
                   </p>
                 )}
               </>

@@ -46,8 +46,8 @@ export default function LoginModal({ open, onClose, redirect }: LoginModalProps)
           </h2>
           <p className="mt-2 text-sm text-zinc-500">
             {lang ==="zh"
-              ?"使用 Google 账号登录，新用户免费下载3款字体"
-              :"Sign in with Google, new users get 3 free downloads"}
+              ?"使用 Google 账号登录，新用户免费下载1款字体"
+              :"Sign in with Google, new users get 1 free download"}
           </p>
         </div>
 

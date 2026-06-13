@@ -19,7 +19,7 @@ function getFontDownloadUrl(fontId: string): string | null {
   return getAssetUrl(fontPath);
 }
 
-const DEFAULT_FREE_LIMIT = 3;
+const DEFAULT_FREE_LIMIT = 1;
 
 async function getPlanData(
   supabase: Awaited<ReturnType<typeof createClient>>,

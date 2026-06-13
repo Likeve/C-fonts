@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS user_plans (
   id SERIAL PRIMARY KEY,
   user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE UNIQUE,
   plan TEXT NOT NULL DEFAULT 'free' CHECK (plan IN ('free', 'unlimited')),
-  free_download_limit INT NOT NULL DEFAULT 3,
+  free_download_limit INT NOT NULL DEFAULT 1,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
@@ -48,7 +48,7 @@ ALTER TABLE user_purchases ENABLE ROW LEVEL SECURITY;
 ALTER TABLE user_plans ENABLE ROW LEVEL SECURITY;
 
 -- Migration: add free_download_limit to existing user_plans table
--- ALTER TABLE user_plans ADD COLUMN IF NOT EXISTS free_download_limit INT NOT NULL DEFAULT 3;
+-- ALTER TABLE user_plans ADD COLUMN IF NOT EXISTS free_download_limit INT NOT NULL DEFAULT 1;
 
 -- user_downloads policies
 CREATE POLICY "Users can read own downloads"

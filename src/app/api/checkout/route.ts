@@ -55,7 +55,7 @@ export async function POST(request: NextRequest) {
                 ? "Unlimited Chinese font downloads forever"
                 : `Chinese font: ${fontName || fontId}`,
             },
-            unit_amount: isUnlimited ? 799 : 199,
+            unit_amount: isUnlimited ? 299 : 99,
           },
           quantity: 1,
         },

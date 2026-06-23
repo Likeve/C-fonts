@@ -391,7 +391,7 @@ export default function FontDetailClient({ font }: FontDetailClientProps) {
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                         </svg>
                         {lang ==="zh" ?"无限制下载" :"Unlimited Downloads"}
-                        <span className="ml-1 opacity-60">$7.99</span>
+                        <span className="ml-1 opacity-60">$2.99</span>
                       </>
                     )}
                   </button>

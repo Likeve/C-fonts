@@ -58,7 +58,7 @@ export default function PurchaseModal({ open, fontId, fontName, onClose }: Purch
                 {lang ==="zh" ? `仅购买「${fontName}」` : `Only"${fontName}"`}
               </p>
             </div>
-            <span className="text-lg font-bold text-zinc-900">$1.99</span>
+            <span className="text-lg font-bold text-zinc-900">$0.99</span>
           </button>
 
           <button
@@ -75,7 +75,7 @@ export default function PurchaseModal({ open, fontId, fontName, onClose }: Purch
                   :"Download any font, forever"}
               </p>
             </div>
-            <span className="text-lg font-bold text-black">$7.99</span>
+            <span className="text-lg font-bold text-black">$2.99</span>
           </button>
         </div>
 

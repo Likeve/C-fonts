@@ -127,7 +127,7 @@ export default function Header() {
           <button
             onClick={handleUnlimitedCta}
             disabled={checkingCta}
-            className="flex items-center gap-1.5 rounded-xl bg-[#FEE3C7] px-3 py-2 text-xs sm:text-sm font-medium text-black transition-colors hover:bg-[#f5d0a8] disabled:opacity-60 shrink-0"
+            className="flex items-center gap-1.5 rounded-lg bg-[#FEE3C7] px-3 py-2 text-xs sm:text-sm font-medium text-black transition-colors hover:bg-[#f5d0a8] disabled:opacity-60 shrink-0"
           >
             {checkingCta ? (
               <div className="h-4 w-4 animate-spin rounded-full border-2 border-black/20 border-t-black" />

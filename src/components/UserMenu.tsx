@@ -172,9 +172,9 @@ export function UserMenu() {
           ) : (
             <button
               onClick={() => setShowLoginModal(true)}
-              className="rounded-lg bg-white px-3 py-1.5 text-sm font-medium text-zinc-900 shadow-sm transition-colors hover:bg-zinc-50"
+              className="rounded-lg bg-black px-3 py-1.5 text-sm font-medium text-white shadow-sm transition-colors hover:bg-zinc-800"
             >
-              {lang ==="zh" ?"登录" :"Sign in"}
+              {lang === "zh" ? "登录" : "Sign in"}
             </button>
           )}
         </>

@@ -27,6 +27,9 @@ export const dict = {
   status: { zh: "状态", "zh-Hant": "狀態", en: "Status" },
   footerCopyright: { zh: "中文字体库", "zh-Hant": "中文字體庫", en: "Chinese Fonts" },
   language: { zh: "语言", "zh-Hant": "語言", en: "Language" },
+  unlimitedCta: { zh: "无限制下载所有字体", "zh-Hant": "無限制下載所有字體", en: "Unlimited Download all fonts" },
+  footerSuggestions: { zh: "欢迎提供您的宝贵建议，随时联系我们。", "zh-Hant": "歡迎提供您的寶貴建議，隨時聯繫我們。", en: "We'd love to hear your suggestions. Feel free to contact us." },
+  footerContact: { zh: "联系我们", "zh-Hant": "聯繫我們", en: "Contact" },
 };
 
 export function t(key: keyof typeof dict, lang: Lang): string {

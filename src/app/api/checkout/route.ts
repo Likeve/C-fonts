@@ -27,7 +27,9 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { fontId, fontName, plan } = body;
 
-    if (!fontId) {
+    const isUnlimited = plan === "unlimited";
+
+    if (!isUnlimited && !fontId) {
       return NextResponse.json({ error: "Missing fontId" }, { status: 400 });
     }
 
@@ -38,7 +40,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const isUnlimited = plan === "unlimited";
+    const resolvedFontId = fontId || "unlimited-plan";
+    const resolvedFontName = fontName || "All Fonts";
 
     const session = await getStripe().checkout.sessions.create({
       payment_method_types: ["card"],
@@ -50,10 +53,10 @@ export async function POST(request: NextRequest) {
             product_data: {
               name: isUnlimited
                 ? "全网永久无限制下载"
-                : `${fontName || fontId}`,
+                : `${resolvedFontName}`,
               description: isUnlimited
                 ? "Unlimited Chinese font downloads forever"
-                : `Chinese font: ${fontName || fontId}`,
+                : `Chinese font: ${resolvedFontName}`,
             },
             unit_amount: isUnlimited ? 299 : 99,
           },
@@ -62,12 +65,16 @@ export async function POST(request: NextRequest) {
       ],
       metadata: {
         userId: user.id,
-        fontId,
-        fontName: fontName || fontId,
+        fontId: resolvedFontId,
+        fontName: resolvedFontName,
         plan: isUnlimited ? "unlimited" : "single",
       },
-      success_url: `${SITE_URL}/success?session_id={CHECKOUT_SESSION_ID}&font=${encodeURIComponent(fontId)}`,
-      cancel_url: `${SITE_URL}/fonts/${encodeURIComponent(fontId)}`,
+      success_url: isUnlimited
+        ? `${SITE_URL}/success?session_id={CHECKOUT_SESSION_ID}&plan=unlimited`
+        : `${SITE_URL}/success?session_id={CHECKOUT_SESSION_ID}&font=${encodeURIComponent(resolvedFontId)}`,
+      cancel_url: isUnlimited
+        ? SITE_URL
+        : `${SITE_URL}/fonts/${encodeURIComponent(resolvedFontId)}`,
     });
 
     return NextResponse.json({ url: session.url });

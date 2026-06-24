@@ -14,13 +14,14 @@ export default function SuccessContent() {
   const searchParams = useSearchParams();
   const sessionId = searchParams.get("session_id");
   const fontId = searchParams.get("font");
+  const urlPlan = searchParams.get("plan");
   const { lang } = useLanguage();
   const downloadTriggered = useRef(false);
 
   const [status, setStatus] = useState<"verifying" |"paid" |"error">(
     sessionId ?"verifying" :"paid"
   );
-  const [plan, setPlan] = useState<string>("single");
+  const [plan, setPlan] = useState<string>(urlPlan || "single");
 
   const font = fontId
     ? data.fonts.find((f) => f.id === decodeURIComponent(fontId))
@@ -65,6 +66,66 @@ export default function SuccessContent() {
   }, [status, fontUrl, font]);
 
   if (!font || !fontUrl) {
+    if (plan === "unlimited") {
+      return (
+        <div className="mx-auto max-w-xl px-4 py-16 text-center">
+          {status === "verifying" && (
+            <div className="flex items-center justify-center py-16">
+              <div className="h-8 w-8 animate-spin rounded-full border-2 border-zinc-300 border-t-zinc-600" />
+            </div>
+          )}
+
+          {status === "error" && (
+            <>
+              <h1 className="text-2xl font-bold text-zinc-900">
+                {lang ==="zh" ?"支付验证失败" :"Payment Verification Failed"}
+              </h1>
+              <p className="mt-3 text-zinc-500">
+                {lang ==="zh"
+                  ?"无法验证您的支付。如果您已完成支付，请联系客服。"
+                  :"Unable to verify your payment. If you completed payment, please contact support."}
+              </p>
+              <Link
+                href="/"
+                className="mt-6 inline-flex items-center gap-2 rounded-xl bg-zinc-900 px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-zinc-800"
+              >
+                {lang ==="zh" ?"返回首页" :"Back to Home"}
+              </Link>
+            </>
+          )}
+
+          {status === "paid" && (
+            <>
+              <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
+                <svg className="h-8 w-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+              <h1 className="text-2xl font-bold text-zinc-900">
+                {lang ==="zh" ?"支付成功" :"Payment Successful"}
+              </h1>
+              <p className="mt-3 text-zinc-500">
+                {lang ==="zh"
+                  ?"您已升级为 Unlimited 会员，现在可以无限制下载所有字体！"
+                  :"You are now an Unlimited member. Download any font on the site without limits!"}
+              </p>
+              <div className="mt-8">
+                <Link
+                  href="/"
+                  className="inline-flex items-center gap-1 text-sm text-zinc-500 hover:text-zinc-800"
+                >
+                  <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                  </svg>
+                  {lang ==="zh" ?"返回首页" :"Back to Home"}
+                </Link>
+              </div>
+            </>
+          )}
+        </div>
+      );
+    }
+
     return (
       <div className="mx-auto max-w-4xl px-4 py-24 text-center">
         <h2 className="text-2xl font-bold text-zinc-900">

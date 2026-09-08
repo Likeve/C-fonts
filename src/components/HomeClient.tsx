@@ -8,7 +8,6 @@ import { t, vendors } from"@/lib/i18n";
 import { getAssetUrl } from"@/lib/assets";
 import { createClient } from"@/lib/supabase/client";
 import LoginModal from"./LoginModal";
-import PurchaseModal from"./PurchaseModal";
 import type { FontData, CategoryData } from"@/types/font";
 import type { User } from"@supabase/supabase-js";
 
@@ -26,9 +25,6 @@ export default function HomeClient({ fonts, categories }: HomeClientProps) {
   const [page, setPage] = useState(1);
   const [user, setUser] = useState<User | null>(null);
   const [showLoginModal, setShowLoginModal] = useState(false);
-  const [showPurchaseModal, setShowPurchaseModal] = useState(false);
-  const [purchaseFontId, setPurchaseFontId] = useState("");
-  const [purchaseFontName, setPurchaseFontName] = useState("");
   const [downloadingFontId, setDownloadingFontId] = useState<string | null>(null);
 
   const filtered = useMemo(() => {
@@ -109,14 +105,6 @@ export default function HomeClient({ fonts, categories }: HomeClientProps) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ fontId: font.id }),
       });
-
-      if (res.status === 402) {
-        setPurchaseFontId(font.id);
-        setPurchaseFontName(font.name);
-        setShowPurchaseModal(true);
-        setDownloadingFontId(null);
-        return;
-      }
 
       const data = await res.json();
       if (data.success && data.downloadUrl) {
@@ -329,12 +317,6 @@ export default function HomeClient({ fonts, categories }: HomeClientProps) {
       <LoginModal
         open={showLoginModal}
         onClose={() => setShowLoginModal(false)}
-      />
-      <PurchaseModal
-        open={showPurchaseModal}
-        fontId={purchaseFontId}
-        fontName={purchaseFontName}
-        onClose={() => setShowPurchaseModal(false)}
       />
     </div>
   );

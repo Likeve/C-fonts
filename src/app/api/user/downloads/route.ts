@@ -19,32 +19,6 @@ function getFontDownloadUrl(fontId: string): string | null {
   return getAssetUrl(fontPath);
 }
 
-const DEFAULT_FREE_LIMIT = 1;
-
-async function getPlanData(
-  supabase: Awaited<ReturnType<typeof createClient>>,
-  userId: string
-): Promise<{ plan: string; free_download_limit?: number } | null> {
-  const { data, error } = await supabase
-    .from("user_plans")
-    .select("plan, free_download_limit")
-    .eq("user_id", userId)
-    .single();
-
-  if (!error && data) return data;
-
-  if (error) {
-    const { data: fallback } = await supabase
-      .from("user_plans")
-      .select("plan")
-      .eq("user_id", userId)
-      .single();
-    return fallback as { plan: string } | null;
-  }
-
-  return null;
-}
-
 export async function GET() {
   const supabase = await createClient();
   const {
@@ -55,7 +29,7 @@ export async function GET() {
     return NextResponse.json({ error: "not_authenticated" }, { status: 401 });
   }
 
-  const [{ data: downloads }, { data: purchases }, planData] = await Promise.all([
+  const [{ data: downloads }, { data: purchases }] = await Promise.all([
     supabase
       .from("user_downloads")
       .select("font_id")
@@ -64,13 +38,12 @@ export async function GET() {
       .from("user_purchases")
       .select("font_id")
       .eq("user_id", user.id),
-    getPlanData(supabase, user.id),
   ]);
 
-  const hasUnlimited = planData?.plan === "unlimited";
-  const freeLimit = planData?.free_download_limit ?? DEFAULT_FREE_LIMIT;
+  const hasUnlimited = true;
+  const freeLimit = 0;
   const freeDownloadsUsed = downloads?.length ?? 0;
-  const remaining = hasUnlimited ? "unlimited" : Math.max(0, freeLimit - freeDownloadsUsed);
+  const remaining = "unlimited";
 
   const downloadedFontIdsRaw = downloads?.map((d) => d.font_id) ?? [];
   const purchasedFontIdsRaw = purchases?.map((p) => p.font_id) ?? [];
@@ -152,25 +125,6 @@ export async function POST(request: NextRequest) {
       downloadUrl,
       reDownload: true,
     });
-  }
-
-  const planData = await getPlanData(supabase, user.id);
-
-  const hasUnlimited = planData?.plan === "unlimited";
-
-  if (!hasUnlimited) {
-    const freeLimit = planData?.free_download_limit ?? DEFAULT_FREE_LIMIT;
-    const { count } = await supabase
-      .from("user_downloads")
-      .select("id", { count: "exact", head: true })
-      .eq("user_id", user.id);
-
-    if ((count ?? 0) >= freeLimit) {
-      return NextResponse.json(
-        { error: "no_free_downloads", freeDownloadsUsed: count },
-        { status: 402 }
-      );
-    }
   }
 
   const { error: insertError } = await supabase

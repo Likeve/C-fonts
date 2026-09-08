@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from"react";
+import { useState, useEffect, useRef } from"react";
 import { useLanguage } from"./LanguageProvider";
 import { t, Lang } from"@/lib/i18n";
 import { UserMenu } from"./UserMenu";
@@ -11,8 +11,6 @@ import Image from"next/image";
 
 export default function Header() {
   const { lang, setLang, label } = useLanguage();
-  const [checkingCta, setCheckingCta] = useState(false);
-  const [user, setUser] = useState<null | object>(null);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [langOpen, setLangOpen] = useState(false);
   const langRef = useRef<HTMLDivElement>(null);
@@ -33,55 +31,19 @@ export default function Header() {
     return () => document.removeEventListener("mousedown", handleClick);
   }, []);
 
-  const triggerCheckout = useCallback(async () => {
-    setCheckingCta(true);
-    try {
-      const res = await fetch("/api/checkout", {
-        method:"POST",
-        headers: {"Content-Type":"application/json" },
-        body: JSON.stringify({ plan:"unlimited" }),
-      });
-      const data = await res.json();
-      if (data.url) {
-        window.location.href = data.url;
-      }
-    } catch {
-      // ignore
-    }
-    setCheckingCta(false);
-  }, []);
-
   useEffect(() => {
     const supabase = createClient();
-    supabase.auth.getUser().then(({ data }) => {
-      setUser(data.user ?? null);
-    });
 
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
-      const newUser = session?.user ?? null;
-      setUser(newUser);
       if (session) {
         setShowLoginModal(false);
-        if (sessionStorage.getItem("pendingUnlimitedCheckout") ==="1") {
-          sessionStorage.removeItem("pendingUnlimitedCheckout");
-          triggerCheckout();
-        }
       }
     });
 
     return () => subscription.unsubscribe();
-  }, [triggerCheckout]);
-
-  const handleUnlimitedCta = () => {
-    if (!user) {
-      sessionStorage.setItem("pendingUnlimitedCheckout","1");
-      setShowLoginModal(true);
-      return;
-    }
-    triggerCheckout();
-  };
+  }, []);
 
   return (
     <header className="sticky top-0 z-50 border-b border-zinc-200 bg-zinc-50/90 backdrop-blur-sm">
@@ -124,29 +86,11 @@ export default function Header() {
             )}
           </div>
 
-          <button
-            onClick={handleUnlimitedCta}
-            disabled={checkingCta}
-            className="flex items-center gap-1.5 rounded-lg bg-[#FEE3C7] px-3 py-2 text-xs sm:text-sm font-medium text-black transition-colors hover:bg-[#f5d0a8] disabled:opacity-60 shrink-0"
-          >
-            {checkingCta ? (
-              <div className="h-4 w-4 animate-spin rounded-full border-2 border-black/20 border-t-black" />
-            ) : (
-              <svg className="h-4 w-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-              </svg>
-            )}
-            {t("unlimitedCta", lang)}
-          </button>
-
           <UserMenu />
 
           <LoginModal
             open={showLoginModal}
-            onClose={() => {
-              sessionStorage.removeItem("pendingUnlimitedCheckout");
-              setShowLoginModal(false);
-            }}
+            onClose={() => setShowLoginModal(false)}
           />
         </div>
       </div>

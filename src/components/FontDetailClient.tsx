@@ -8,7 +8,6 @@ import { t, vendors } from"@/lib/i18n";
 import { getAssetUrl } from"@/lib/assets";
 import { createClient } from"@/lib/supabase/client";
 import LoginModal from"./LoginModal";
-import PurchaseModal from"./PurchaseModal";
 import type { FontData } from"@/types/font";
 import type { User } from"@supabase/supabase-js";
 
@@ -27,14 +26,9 @@ export default function FontDetailClient({ font }: FontDetailClientProps) {
   const [user, setUser] = useState<User | null>(null);
   const [authLoading, setAuthLoading] = useState(true);
   const [downloadsInfo, setDownloadsInfo] = useState<{
-    remaining: number |"unlimited";
-    freeLimit: number;
-    freeDownloadsUsed: number;
-    hasUnlimited: boolean;
     downloadedFontIds: string[];
     purchasedFontIds: string[];
   } | null>(null);
-  const [showPurchaseModal, setShowPurchaseModal] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const previewRef = useRef<HTMLDivElement>(null);
 
@@ -153,12 +147,6 @@ export default function FontDetailClient({ font }: FontDetailClientProps) {
         body: JSON.stringify({ fontId: font.id }),
       });
 
-      if (res.status === 402) {
-        setShowPurchaseModal(true);
-        setCheckingOut(false);
-        return;
-      }
-
       const data = await res.json();
 
       if (data.success && data.downloadUrl) {
@@ -174,26 +162,6 @@ export default function FontDetailClient({ font }: FontDetailClientProps) {
       // ignore
     }
     setCheckingOut(false);
-  };
-
-  const [checkingUnlimited, setCheckingUnlimited] = useState(false);
-
-  const handleUnlimitedPurchase = async () => {
-    setCheckingUnlimited(true);
-    try {
-      const res = await fetch("/api/checkout", {
-        method:"POST",
-        headers: {"Content-Type":"application/json" },
-        body: JSON.stringify({ fontId: font.id, fontName: font.name, plan:"unlimited" }),
-      });
-      const data = await res.json();
-      if (data.url) {
-        window.location.href = data.url;
-      }
-    } catch {
-      // ignore
-    }
-    setCheckingUnlimited(false);
   };
 
   const displayName = lang ==="en" ? font.englishName : font.name;
@@ -213,23 +181,13 @@ export default function FontDetailClient({ font }: FontDetailClientProps) {
         ? lang ==="zh"
           ?"登录后免费下载"
           :"Sign in to download free"
-        : !downloadsInfo
-          ? t("loading", lang)
-          : fontOwned
-            ? lang ==="zh"
-              ?"再次下载"
-              :"Download again"
-            : downloadsInfo.remaining === 0 && !downloadsInfo.hasUnlimited
-              ? lang ==="zh"
-                ?"购买下载"
-                :"Buy & Download"
-              : downloadsInfo.hasUnlimited
-                ? lang ==="zh"
-                  ?"下载字体"
-                  :"Download Font"
-                : lang ==="zh"
-                  ? `下载字体 (${downloadsInfo.remaining}/${downloadsInfo.freeLimit})`
-                  : `Download Font (${downloadsInfo.remaining}/${downloadsInfo.freeLimit})`;
+        : fontOwned
+          ? lang ==="zh"
+            ?"再次下载"
+            :"Download again"
+          : lang ==="zh"
+            ?"下载字体"
+            :"Download Font";
 
   return (
     <div className="mx-auto max-w-4xl px-4 sm:px-6 py-8">
@@ -374,36 +332,7 @@ export default function FontDetailClient({ font }: FontDetailClientProps) {
                   )}
                 </button>
 
-                {user && !downloadsInfo?.hasUnlimited && (
-                  <button
-                    onClick={handleUnlimitedPurchase}
-                    disabled={checkingUnlimited}
-                    className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#FEE3C7] px-4 py-3 text-sm font-medium text-black transition-colors hover:bg-[#f5d0a8] disabled:opacity-60"
-                  >
-                    {checkingUnlimited ? (
-                      <>
-                        <div className="h-4 w-4 animate-spin rounded-full border-2 border-black/20 border-t-black" />
-                        {lang ==="zh" ?"处理中..." :"Processing..."}
-                      </>
-                    ) : (
-                      <>
-                        <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                        </svg>
-                        {lang ==="zh" ?"无限制下载" :"Unlimited Downloads"}
-                        <span className="ml-1 opacity-60">$2.99</span>
-                      </>
-                    )}
-                  </button>
-                )}
-
-                {user && downloadsInfo?.hasUnlimited && (
-                  <p className="text-center text-xs text-green-600">
-                    {lang ==="zh" ?"永久无限制会员" :"Unlimited Member"}
-                  </p>
-                )}
-
-                {user && fontOwned && !downloadsInfo?.hasUnlimited && (
+                {user && fontOwned && (
                   <p className="text-center text-xs text-blue-600">
                     {lang ==="zh"
                       ?"你已拥有此字体，可随时免费下载"
@@ -414,8 +343,8 @@ export default function FontDetailClient({ font }: FontDetailClientProps) {
                 {!user && !authLoading && (
                   <p className="text-center text-xs text-zinc-400">
                     {lang ==="zh"
-                      ?"登录后可免费下载1款字体"
-                      :"Sign in for 1 free download"}
+                      ?"登录后即可无限量下载"
+                      :"Sign in for unlimited downloads"}
                   </p>
                 )}
               </>
@@ -434,12 +363,6 @@ export default function FontDetailClient({ font }: FontDetailClientProps) {
         open={showLoginModal}
         onClose={() => setShowLoginModal(false)}
         redirect={`/fonts/${encodeURIComponent(font.id)}`}
-      />
-      <PurchaseModal
-        open={showPurchaseModal}
-        fontId={font.id}
-        fontName={font.name}
-        onClose={() => setShowPurchaseModal(false)}
       />
     </div>
   );
